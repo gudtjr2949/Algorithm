@@ -6,7 +6,6 @@ import java.util.StringTokenizer;
 public class Main {
 
     static int N;
-
     static class Meeting implements Comparable<Meeting> {
         int start, end;
 
@@ -15,15 +14,6 @@ public class Main {
             this.end = end;
         }
 
-//        @Override
-//        public int compareTo(Meeting m) {
-//            if (m.end == this.end) {
-//                return this.start - m.start;
-//            } else {
-//                return this.end - m.end;
-//            }
-//        }
-
         @Override
         public int compareTo(Meeting m) {
             if (this.end == m.end) {
@@ -31,14 +21,6 @@ public class Main {
             } else {
                 return this.end - m.end;
             }
-        }
-
-        @Override
-        public String toString() {
-            return "Meeting{" +
-                    "start=" + start +
-                    ", end=" + end +
-                    '}';
         }
     }
     static Meeting[] arr;
@@ -63,9 +45,6 @@ public class Main {
         // 그러므로 회의 종료를 기준으로 오름차순 정렬을 하고, 만약 회의 종료시간이 같은 회의라면 회의 시작시간이
         Arrays.sort(arr);
 
-//        for (int i = 0 ; i < N ; i++) {
-//            System.out.println(arr[i]);
-//        }
 
         int lastEnd = 0;
         int answer = 0;
