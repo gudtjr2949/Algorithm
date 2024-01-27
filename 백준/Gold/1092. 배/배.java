@@ -51,9 +51,10 @@ public class Main {
         while (!box.isEmpty()) {
             int boxIdx = 0;
             for (int i = 0 ; i < N ; ) {
-                if (boxIdx == box.size()) {
+                if (boxIdx == box.size())
                     break;
-                } else if(box.get(boxIdx) <= crane[i]) {
+                
+                 if(box.get(boxIdx) <= crane[i]) {
                     box.remove(boxIdx);
                     i++;
                 } else {
