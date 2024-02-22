@@ -36,9 +36,10 @@ public class Main {
                 long notReceive = Math.min(arr[i], lack / (N - i));
                 lack -= notReceive;
                 answer += notReceive * notReceive;
-                answer %= remain;
             }
         }
+
+        answer %= remain;
 
         System.out.println(answer);
     }
