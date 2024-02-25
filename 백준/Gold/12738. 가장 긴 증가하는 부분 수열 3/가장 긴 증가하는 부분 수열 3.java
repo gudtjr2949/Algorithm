@@ -28,17 +28,18 @@ public class Main {
             if (num > list.get(right)) {
                 list.add(num);
             } else {
-
-                while (left < right) {
+                int idx = 0;
+                while (left <= right) {
                     int mid = (left + right) / 2;
                     if (list.get(mid) < num) {
                         left = mid+1;
                     } else {
-                        right = mid;
+                        idx = mid;
+                        right = mid-1;
                     }
                 }
 
-                list.set(right, num);
+                list.set(idx, num);
             }
         }
 
