@@ -23,16 +23,14 @@ public class Main {
             StringTokenizer st = new StringTokenizer(bf.readLine());
             time[i] = Integer.parseInt(st.nextToken());
             int M = Integer.parseInt(st.nextToken());
+            edgeCnt[i] = M;
             for (int j = 0; j < M; j++) {
                 int first = Integer.parseInt(st.nextToken());
                 adj.get(first).add(i);
-                edgeCnt[i]++;
             }
         }
-
-        int answer = solve();
-
-        System.out.println(answer);
+        
+        System.out.println(solve());
     }
 
     static int solve() {
@@ -45,18 +43,16 @@ public class Main {
         }
 
         while (!Q.isEmpty()) {
-//            int size = Q.size();
-//            for (int i = 0; i < size; i++) {
-            int num = Q.poll();
-            for (int next : adj.get(num)) {
-                edgeCnt[next]--;
-                dp[next] = Math.max(dp[next], dp[num] + time[next]);
-                if (edgeCnt[next] == 0) Q.add(next);
+            int size = Q.size();
+            for (int i = 0; i < size; i++) {
+                int num = Q.poll();
+                for (int next : adj.get(num)) {
+                    edgeCnt[next]--;
+                    dp[next] = Math.max(dp[next], dp[num] + time[next]);
+                    if (edgeCnt[next] == 0) Q.add(next);
+                }
             }
         }
-//        }
-
-        // 만약 덜 끝낸 작업이 있으면?
 
         int total = 0;
 
