@@ -6,7 +6,7 @@ public class Main {
 
     static int N, M;
     static int[] edgeCnt;
-    static List<Integer> list;
+    static StringBuilder sb = new StringBuilder();
     static List<List<Integer>> adj = new ArrayList<>();
 
 
@@ -17,7 +17,6 @@ public class Main {
         M = Integer.parseInt(st.nextToken());
 
         edgeCnt = new int[N+1];
-        list = new ArrayList<>();
 
         for (int i = 0 ; i <= N ; i++) {
             adj.add(new ArrayList<>());
@@ -33,10 +32,7 @@ public class Main {
 
         solve();
         
-        for (int answer : list) {
-            System.out.print(answer + " ");
-        }
-
+        System.out.println(sb);
     }
 
     static void solve() {
@@ -51,7 +47,7 @@ public class Main {
         while (!Q.isEmpty()) {
             int now = Q.poll();
 
-            list.add(now);
+            sb.append(now).append(" ");
 
             for (int next : adj.get(now)) {
                 edgeCnt[next]--;
