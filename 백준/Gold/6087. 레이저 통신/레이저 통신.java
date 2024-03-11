@@ -20,16 +20,6 @@ public class Main {
         }
 
         @Override
-        public String toString() {
-            return "Node{" +
-                    "x=" + x +
-                    ", y=" + y +
-                    ", cnt=" + cnt +
-                    ", dir=" + dir +
-                    '}';
-        }
-
-        @Override
         public int compareTo(Node n) {
             return this.cnt - n.cnt;
         }
@@ -65,14 +55,6 @@ public class Main {
 
         solve();
 
-//        for (int i = 0 ; i < H ; i++) {
-//            for (int j = 0 ; j < W ; j++) {
-//                System.out.print(dp[i][j] + " ");
-//            }
-//            System.out.println();
-//        }
-//        System.out.println();
-
         System.out.println(dp[endY][endX]);
     }
 
@@ -89,9 +71,6 @@ public class Main {
 
         while (!PQ.isEmpty()) {
             Node now = PQ.poll();
-//            System.out.println(now.toString());
-
-//            if (now.x == endX && now.y == endY) return;
 
             if (!visited[now.y][now.x]) visited[now.y][now.x] = true;
 
