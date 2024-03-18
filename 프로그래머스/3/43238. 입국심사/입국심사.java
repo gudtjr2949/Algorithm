@@ -34,19 +34,4 @@ class Solution {
         
         return answer;
     }
-    
-    // 만약 mid 초 만큼의 시간이 주어졌을 때, 각 심사관이 심사할 수 있는 사람 수
-    static long solve(int mid, int[] times, int n) {
-        int cnt = 0;
-        
-        for (int i = 0 ; i < times.length ; i++) {
-            cnt += mid / (long) times[i];
-            
-            if (cnt >= n) {
-                return cnt;
-            }
-        }
-        
-        return cnt;
-    }
 }
