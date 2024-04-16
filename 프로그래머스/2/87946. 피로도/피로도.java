@@ -37,6 +37,8 @@ class Solution {
             if (k >= dungeons[arr[i]][0]) {
                 cnt++;
                 k -= dungeons[arr[i]][1];
+            } else {
+                break;
             }
         }
         
