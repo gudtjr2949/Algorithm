@@ -17,25 +17,19 @@ public class Main {
     }
 
     static void solve() {
-        String str = "";
-        for (int i = 0 ; i < 2 * N + 1 ; i++) {
-            if (i % 2 == 0) {
-                str += "I";
+        int cnt = 0;
+
+        for (int i = 1 ; i < M-1 ; ) {
+            if (s.charAt(i) == 'O' && s.charAt(i+1) == 'I') {
+                cnt++;
+                if (cnt == N) {
+                    if (s.charAt(i - (2*N-1)) == 'I') answer++;
+                    cnt--;
+                }
+                i += 2;
             } else {
-                str += "O";
-            }
-        }
-
-        for (int i = 0 ; i <= M - (2 * N + 1); i++) {
-            if (s.charAt(i) == 'I') {
-                String tmp = "";
-                for (int j = i; j < i + (2 * N + 1); j++) {
-                    tmp += s.charAt(j);
-                }
-
-                if (str.equals(tmp)) {
-                    answer++;
-                }
+                cnt = 0;
+                i++;
             }
         }
     }
