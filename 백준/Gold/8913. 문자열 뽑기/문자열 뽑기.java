@@ -30,15 +30,15 @@ public class Main {
     static void dfs(String s) {
         if (possible) return;
 
-        int cnt = 1;
+        int cnt = 1; // 처음엔 나 자신을 포함하므로 cnt = 1
         int startIdx = 0;
 
-        for (int i = 1 ; i < s.length() ; i++) {
-            if (s.charAt(i) == s.charAt(i-1)) cnt++;
+        for (int i = 0 ; i < s.length()-1 ; i++) {
+            if (s.charAt(i) == s.charAt(i+1)) cnt++;
             else {
                 if (cnt >= 2)
                     dfs(s.substring(0, startIdx) + s.substring(startIdx + cnt, s.length()));
-                startIdx = i;
+                startIdx = i+1;
                 cnt = 1;
             }
         }
