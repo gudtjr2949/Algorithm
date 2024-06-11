@@ -21,35 +21,17 @@ class Solution {
     public int solution(String[][] book_time) {
         answer = 0;
         
-        Arrays.sort(book_time, new Comparator<String[]>() {
-			@Override
-			public int compare(String[] o1, String[] o2) {
-				if (o1[0].equals(o2[0]))
-					return o1[1].compareTo(o2[1]);
-				else
-					return o1[0].compareTo(o2[0]);
-			}
-		});
-        
-        // 예약 시간 정수로 변경
-		int[][] time = new int[book_time.length][2];
-		for (int i = 0; i < book_time.length; i++) {
-				int start_time = Integer.parseInt(book_time[i][0].replace(":", ""));
-				int end_time = Integer.parseInt(book_time[i][1].replace(":", ""));
-				
-				end_time += 10;
-	            if(end_time%100 >= 60){
-	                end_time+=40;
-	            }
-	            
-	            time[i][0] = start_time;
-	            time[i][1] = end_time;
-		}
-        
         list = new ArrayList<>();
         
         for (int i = 0 ; i < book_time.length ; i++) {
-            list.add(new Book(time[i][0], time[i][1]));
+            int start = Integer.parseInt(book_time[i][0].replace(":", ""));
+            int end = Integer.parseInt(book_time[i][1].replace(":", "")) + 10;
+            
+	        if (end % 100 >= 60){
+	            end += 40;
+	        }
+            
+            list.add(new Book(start, end));
         }
         
         Collections.sort(list, new Comparator<Book>() {
