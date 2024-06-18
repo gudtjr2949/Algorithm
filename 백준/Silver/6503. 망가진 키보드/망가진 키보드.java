@@ -27,9 +27,7 @@ public class Main {
         int[] check = new int[128];
 
         int cnt = 0; // 사용한 자판 수
-
-//        check[s.charAt(0)] = 1;
-
+        
         while (left <= right) {
             if (right+1 >= s.length()) break;
 
