@@ -26,11 +26,8 @@ public class Main {
 
         for(int k = 0 ; k < N ; k++) {
             for(int i = 0 ; i < N ; i++) {
-                if(k == i) continue;
                 for(int j = 0 ; j < N ; j++){
-                    if(i == j || j == k) continue;
-                    if(dist[i][j] > dist[i][k] + dist[k][j]) dist[i][j] = dist[i][k] + dist[k][j];
-
+                    dist[i][j] = Math.min(dist[i][j], dist[i][k] + dist[k][j]);
                 }
             }
         }
