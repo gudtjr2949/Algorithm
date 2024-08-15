@@ -6,13 +6,13 @@ import java.util.StringTokenizer;
 public class Main {
 
     static int N, M;
-    static int[] arr, arr2;
+    static int[] arr;
 
     public static void main(String[] args) throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        StringBuilder sb = new StringBuilder();
 
         N = Integer.parseInt(bf.readLine());
-
         arr = new int[N];
 
         StringTokenizer st = new StringTokenizer(bf.readLine());
@@ -21,57 +21,50 @@ public class Main {
             arr[i] = Integer.parseInt(st.nextToken());
         }
 
+        Arrays.sort(arr);
+
         M = Integer.parseInt(bf.readLine());
 
         st = new StringTokenizer(bf.readLine());
 
-        Arrays.sort(arr);
-
-        StringBuilder sb = new StringBuilder();
-
         for (int i = 0 ; i < M ; i++) {
-            int key = Integer.parseInt(st.nextToken());
+            int findNum = Integer.parseInt(st.nextToken());
 
-            sb.append(upperBound(key) - lowerBound(key)).append(" ");
+            sb.append(upper(findNum) - lower(findNum)).append(" ");
         }
 
         System.out.println(sb);
     }
 
-    // key 이상의 arr1[mid] 최초 인덱스을 리턴
-    static int lowerBound(int key) {
+    static int lower(int findNum) {
         int left = 0;
         int right = N;
 
         while (left < right) {
             int mid = (left + right) / 2;
 
-            if (arr[mid] >= key) {
+            if (arr[mid] >= findNum)
                 right = mid;
-            } else {
-                left = mid + 1;
-            }
+            else
+                left = mid+1;
         }
 
-        return left;
+        return right;
     }
 
-    // key 를 초과하는 arr1[mid] 최초 인덱스을 리턴
-    static int upperBound(int key) {
+    static int upper(int findNum) {
         int left = 0;
         int right = N;
 
         while (left < right) {
             int mid = (left + right) / 2;
 
-            if (arr[mid] > key) {
+            if (arr[mid] > findNum)
                 right = mid;
-            } else {
-                left = mid + 1;
-            }
+            else
+                left = mid+1;
         }
 
-        return left;
+        return right;
     }
-
 }
