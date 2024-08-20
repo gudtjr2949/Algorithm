@@ -6,46 +6,45 @@ import java.util.StringTokenizer;
 public class Main {
 
     static int N;
-    static long min, answer1, answer2;
-    static long[] arr;
+    static int[] arr;
+    static long[] answer;
 
     public static void main(String[] args) throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
 
         N = Integer.parseInt(bf.readLine());
-
-        arr = new long[N];
+        arr = new int[N];
+        answer = new long[2];
 
         StringTokenizer st = new StringTokenizer(bf.readLine());
-
         for (int i = 0 ; i < N ; i++) {
-            arr[i] = Long.parseLong(st.nextToken());
+            arr[i] = Integer.parseInt(st.nextToken());
         }
 
         Arrays.sort(arr);
 
-        min = Long.MAX_VALUE;
-
         solve();
 
-        System.out.println(answer1 + " " + answer2);
+        System.out.println(answer[0] + " " + answer[1]);
     }
 
     static void solve() {
         int left = 0;
         int right = N-1;
 
+        long min = Integer.MAX_VALUE;
+
         while (left < right) {
             long sum = arr[left] + arr[right];
 
-            if (Math.abs(sum) < min) {
+            if (min > Math.abs(sum)) {
+                answer[0] = arr[left];
+                answer[1] = arr[right];
                 min = Math.abs(sum);
-                answer1 = arr[left];
-                answer2 = arr[right];
             }
 
-            if (sum < 0) left++;
-            else right--;
+            if (sum > 0) right--;
+            else left++;
         }
     }
 }
