@@ -5,47 +5,51 @@ import java.util.*;
 public class Main {
 
     static int N;
-    static int[] depth, parents;
-    static boolean[] visited;
     static List<List<Integer>> adj;
-    static StringBuilder sb = new StringBuilder();
+    static int[] depth, parents;
 
     public static void main(String[] args) throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        StringBuilder sb = new StringBuilder();
+
         N = Integer.parseInt(bf.readLine());
-        depth = new int[N+1];
-        parents = new int[N+1];
-        visited = new boolean[N+1];
         adj = new ArrayList<>();
-        for (int i = 0 ; i <= N ; i++) {
+        for (int i = 0 ; i <= N ; i++)
             adj.add(new ArrayList<>());
-        }
+
 
         for (int i = 0 ; i < N-1 ; i++) {
             StringTokenizer st = new StringTokenizer(bf.readLine());
-            int node1 = Integer.parseInt(st.nextToken());
-            int node2 = Integer.parseInt(st.nextToken());
-            adj.get(node1).add(node2);
-            adj.get(node2).add(node1);
+            int n1 = Integer.parseInt(st.nextToken());
+            int n2 = Integer.parseInt(st.nextToken());
+            adj.get(n1).add(n2);
+            adj.get(n2).add(n1);
         }
 
-        BFS();
+        depth = new int[N+1];
+        parents = new int[N+1];
+
+        depth[1] = 1;
+        parents[1] = 1;
+
+        bfs();
 
         int M = Integer.parseInt(bf.readLine());
 
         for (int i = 0 ; i < M ; i++) {
             StringTokenizer st = new StringTokenizer(bf.readLine());
-            int node1 = Integer.parseInt(st.nextToken());
-            int node2 = Integer.parseInt(st.nextToken());
-            LCA(node1, node2);
+            int n1 = Integer.parseInt(st.nextToken());
+            int n2 = Integer.parseInt(st.nextToken());
+            sb.append(lcs(n1, n2)).append("\n");
         }
 
         System.out.println(sb);
     }
 
-    static void BFS() {
+    static void bfs() {
         Queue<Integer> Q = new LinkedList<>();
         Q.add(1);
+        boolean[] visited = new boolean[N+1];
         visited[1] = true;
 
         while (!Q.isEmpty()) {
@@ -54,7 +58,7 @@ public class Main {
             for (int child : adj.get(parent)) {
                 if (!visited[child]) {
                     visited[child] = true;
-                    depth[child] = depth[parent] + 1;
+                    depth[child] = depth[parent]+1;
                     parents[child] = parent;
                     Q.add(child);
                 }
@@ -62,24 +66,25 @@ public class Main {
         }
     }
 
-    static void LCA(int node1, int node2) {
-
-        if (depth[node1] > depth[node2]) {
-            int tmp = node1;
-            node1 = node2;
-            node2 = tmp;
+    // n2가 무조건 깊은 노드
+    static int lcs(int n1, int n2) {
+        if (depth[n1] > depth[n2]) {
+            int tmp = n1;
+            n1 = n2;
+            n2 = tmp;
         }
 
-        // node1 과 node2 의 높이를 같게 만들어야 함 -> node2 의 깊이가 더 깊으므로 (= 더 밑에 있으므로) node2 를 계속 부모노드로 갱신함
-        while (depth[node1] != depth[node2]) {
-            node2 = parents[node2];
+        while (depth[n1] != depth[n2]) {
+            n2 = parents[n2];
         }
 
-        while (node1 != node2) {
-            node1 = parents[node1];
-            node2 = parents[node2];
+        if (n1 == n2) return n1;
+
+        while (parents[n1] != parents[n2]) {
+            n1 = parents[n1];
+            n2 = parents[n2];
         }
 
-        sb.append(node1).append("\n");
+        return parents[n1];
     }
 }
