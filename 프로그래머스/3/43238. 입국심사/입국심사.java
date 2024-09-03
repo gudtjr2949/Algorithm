@@ -1,37 +1,49 @@
 import java.util.*;
 
 class Solution {
+    
+    static int N;
+    static long answer;
+    static int[] copiedTimes;
+    
     public long solution(int n, int[] times) {
-        long answer = 0;
+        N = n;
+        answer = 0;
         
-        Arrays.sort(times);
+        copiedTimes = times;
+        Arrays.sort(copiedTimes);
         
-        answer = binarySearch(n, times);
+        solve();
         
         return answer;
     }
     
-    static long binarySearch(int n, int[] times) {
+    static void solve() {
         long left = 0;
-        long right = (long) n * times[times.length-1];
-        long answer = 0;
+        long right = Long.MAX_VALUE;
         
         while (left <= right) {
             long mid = (left + right) / 2;
             
-            long people = 0;
-            
-            for (int i = 0 ; i < times.length ; i++) 
-                people += mid / times[i];
-            
-            if (people < n) {
-                left = mid + 1;
+            if (count(mid) >= N) {
+                right = mid-1;
             } else {
-                answer = mid;
-                right = mid - 1;
+                left = mid+1;
             }
         }
         
-        return answer;
+        answer = left;
     }
+    
+    static long count(long mid) {
+        long result = 0;
+        for (int i = 0 ; i < copiedTimes.length ; i++) {
+            result += mid / copiedTimes[i];
+            
+            if (result > N) return N+1;
+        }
+        
+        return result;
+    }
+    
 }
