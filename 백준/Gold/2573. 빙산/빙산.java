@@ -31,8 +31,6 @@ public class Main {
 
     static void solve() {
         while (true) {
-//            print();
-
             visited = new boolean[N][M];
             int cnt = 0;
             for (int i = 0 ; i < N ; i++) {
@@ -56,16 +54,6 @@ public class Main {
 
             answer++;
         }
-    }
-
-    private static void print() {
-        for (int i = 0 ; i < N ; i++) {
-            for (int j = 0 ; j < M ; j++) {
-                System.out.print(map[i][j] + " ");
-            }
-            System.out.println();
-        }
-        System.out.println();
     }
 
     static void dfs(int x, int y) {
