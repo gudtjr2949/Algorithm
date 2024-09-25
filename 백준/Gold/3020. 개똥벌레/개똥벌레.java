@@ -5,60 +5,55 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-    static int N, H;
+    static long N, H, min, cnt;
 
     public static void main(String[] args) throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(bf.readLine());
+        N = Long.parseLong(st.nextToken());
+        H = Long.parseLong(st.nextToken());
 
-        N = Integer.parseInt(st.nextToken());
-        H = Integer.parseInt(st.nextToken());
-
-        int[] arr1 = new int[N/2]; // 석순
-        int[] arr2 = new int[N/2]; // 종유석
+        long[] arr1 = new long[(int) N/2];
+        long[] arr2 = new long[(int) N/2];
 
         for (int i = 0 ; i < N ; i++) {
-            int length = Integer.parseInt(bf.readLine());
-
             if (i % 2 == 0) {
-                arr1[i/2] = length;
+                arr1[i/2] = Long.parseLong(bf.readLine());
             } else {
-                arr2[i/2] = length;
+                arr2[i/2] = Long.parseLong(bf.readLine());
             }
         }
+
+        min = Integer.MAX_VALUE;
 
         Arrays.sort(arr1);
         Arrays.sort(arr2);
 
-        int min = Integer.MAX_VALUE;
-        int minCnt = 0;
+        solve(arr1, arr2);
 
+        System.out.println(min + " " + cnt);
+    }
+
+    static void solve(long[] arr1, long[] arr2) {
         for (int i = 1 ; i <= H ; i++) {
-            // 파괴한 i 구간의 석순과 종유석 수
-            int sum = binarySearch(0, N/2, i, arr1) + binarySearch(0, N/2, H-i+1, arr2);
+            long sum = bs(0, N/2, i, arr1) + bs(0, N/2, H-i+1, arr2);
 
             if (sum < min) {
                 min = sum;
-                minCnt = 1;
-            } else if (sum == min) {
-                minCnt++;
-            }
+                cnt = 1;
+            } else if (sum == min) cnt++;
         }
-
-        System.out.println(min + " " + minCnt);
     }
 
-    static int binarySearch(int down, int up, int high, int[] arr) {
-        while (down < up) {
-            int mid = (up + down) / 2;
+    static long bs(long left, long right, long target, long[] arr) {
+        while (left < right) {
+            long mid = (left + right) / 2;
 
-            if (arr[mid] >= high) {
-                up = mid;
-            } else {
-                down = mid + 1;
-            }
+            if (arr[(int) mid] < target) {
+                left = mid+1;
+            } else right = mid;
         }
 
-        return arr.length - up;
+        return arr.length - left;
     }
 }
