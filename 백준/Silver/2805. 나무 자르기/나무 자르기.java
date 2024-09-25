@@ -4,12 +4,11 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-    static long N, M, answer = 0;
+    static long N, M, MAX, answer;
     static long[] arr;
 
     public static void main(String[] args) throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-
         StringTokenizer st = new StringTokenizer(bf.readLine());
         N = Long.parseLong(st.nextToken());
         M = Long.parseLong(st.nextToken());
@@ -18,9 +17,9 @@ public class Main {
 
         st = new StringTokenizer(bf.readLine());
 
-
         for (int i = 0 ; i < N ; i++) {
             arr[i] = Long.parseLong(st.nextToken());
+            MAX = Math.max(MAX, arr[i]);
         }
 
         solve();
@@ -29,35 +28,27 @@ public class Main {
     }
 
     static void solve() {
-        long low = 0;
-        long high = 0;
+        long left = 0;
+        long right = MAX;
 
-        for (int i = 0 ; i < N ; i++) {
-            high = Math.max(arr[i], high);
-        }
+        while (left < right) {
+            long mid = (left + right) / 2;
+            long cnt = cntTree(mid);
 
-        while (low < high) {
-            long mid = (low + high) / 2;
-
-            if (checkTreeLength(mid) >= M) { // 나무를 너무 많이 짜름 -> mid를 더 위로 올려야 함 -> low = mid
-                low = mid + 1;
+            if (cnt >= M) {
+                left = mid+1;
                 answer = Math.max(answer, mid);
             } else {
-                high = mid;
+                right = mid;
             }
         }
-
     }
 
-    static long checkTreeLength(long cut) {
-        long sum = 0;
-
+    static long cntTree(long mid) {
+        long result = 0;
         for (int i = 0 ; i < N ; i++) {
-            if (arr[i] > cut) {
-                sum += arr[i] - cut;
-            }
+            result += (arr[i] - mid) > 0 ? arr[i] - mid : 0;
         }
-
-        return sum;
+        return result;
     }
 }
