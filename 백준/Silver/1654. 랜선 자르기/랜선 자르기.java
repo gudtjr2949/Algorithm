@@ -1,57 +1,51 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.Map;
 import java.util.StringTokenizer;
 
 public class Main {
 
+    static long K, N, MAX, answer;
     static long[] arr;
-    static int K, N;
 
     public static void main(String[] args) throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(bf.readLine());
+        K = Long.parseLong(st.nextToken());
+        N = Long.parseLong(st.nextToken());
 
-        K = Integer.parseInt(st.nextToken());
-        N = Integer.parseInt(st.nextToken());
-
-        arr = new long[K];
+        arr = new long[(int) K];
 
         for (int i = 0 ; i < K ; i++) {
             arr[i] = Long.parseLong(bf.readLine());
+            MAX = Math.max(MAX, arr[i]);
         }
 
-        Arrays.sort(arr);
-
-        binarySearch();
+        solve();
+        System.out.println(answer);
     }
 
-    static void binarySearch() {
-        long left = 1;
-        long right = Integer.MAX_VALUE;
+    static void solve() {
+        long left = 0;
+        long right = MAX;
 
         while (left <= right) {
             long mid = (left + right) / 2;
-            long cnt = cntLAN(mid);
-
-            if (cnt < N) {
-                right = mid - 1;
+            long cnt = cntLine(mid);
+            if (cnt >= N) {
+                left = mid+1;
+                answer = Math.max(answer, mid);
             } else {
-                left = mid + 1;
+                right = mid-1;
             }
         }
-
-        System.out.println(right);
     }
 
-    static long cntLAN(long num) {
-        long cnt = 0;
-
+    static long cntLine(long mid) {
+        if (mid == 0) return N+1;
+        long result = 0;
         for (int i = 0 ; i < K ; i++) {
-            cnt += arr[i] / num;
+            result += arr[i] / mid;
         }
-
-        return cnt;
+        return result;
     }
 }
