@@ -2,24 +2,27 @@ import java.util.*;
 
 class Solution {
     
-    static int[] parent;
+    static int answer;
+    static int[] parents;
     
     public int solution(int n, int[][] costs) {
-        int answer = 0;
-        
-        parent = new int[n+1];
-        
-        for (int i = 0 ; i <= n ; i++) parent[i] = i;
-        
-        Arrays.sort(costs, (o1, o2) -> o1[2] - o2[2]);
-        
+        answer = 0;
+        parents = new int[n];
+        for (int i = 0 ; i < n ; i++) parents[i] = i;
+
+        Arrays.sort(costs, new Comparator<>() {
+            @Override
+            public int compare(int[] o1, int[] o2) {
+                return o1[2] - o2[2];
+            }
+        });
         
         for (int i = 0 ; i < costs.length ; i++) {
             int x = costs[i][0];
             int y = costs[i][1];
             int cost = costs[i][2];
             
-            if (findParents(x) != findParents(y)) {
+            if (findParent(x) != findParent(y)) {
                 union(x, y);
                 answer += cost;
             }
@@ -29,14 +32,15 @@ class Solution {
     }
     
     static void union(int x, int y) {
-        x = findParents(x);
-        y = findParents(y);
+        x = findParent(x);
+        y = findParent(y);
         
-        if (x != y) parent[x] = y;
+        if (x != y) parents[x] = y;
     }
     
-    static int findParents(int num) {
-        if (num == parent[num]) return num;
-        return findParents(parent[num]);
+    
+    static int findParent(int num) {
+        if (num != parents[num]) return findParent(parents[num]);
+        return num;
     }
 }
