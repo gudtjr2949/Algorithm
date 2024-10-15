@@ -4,46 +4,41 @@ class Solution {
     
     static int N;
     static long answer;
-    static int[] copiedTimes;
     
     public long solution(int n, int[] times) {
-        N = n;
         answer = 0;
         
-        copiedTimes = times;
-        Arrays.sort(copiedTimes);
-        
-        solve();
+        N = n;
+        solve(times);
         
         return answer;
     }
     
-    static void solve() {
+    static void solve(int[] times) {
         long left = 0;
         long right = Long.MAX_VALUE;
         
         while (left <= right) {
             long mid = (left + right) / 2;
             
-            if (count(mid) >= N) {
-                right = mid-1;
-            } else {
+            if (count(mid, times) < N) 
                 left = mid+1;
-            }
+            else {
+                answer = mid;
+                right = mid-1;
+            }            
         }
-        
-        answer = left;
     }
     
-    static long count(long mid) {
+    static long count(long mid, int[] times) {
         long result = 0;
-        for (int i = 0 ; i < copiedTimes.length ; i++) {
-            result += mid / copiedTimes[i];
+        
+        for (int i = 0 ; i < times.length ; i++) {
+            result += mid / times[i];
             
             if (result > N) return N+1;
         }
         
         return result;
     }
-    
 }
