@@ -2,70 +2,60 @@ import java.util.*;
 
 class Solution {
     
-    static int N, end;
+    static int MAX = 100_001;
     static int[] dp;
-    static List<List<Node>> adj;
-    static class Node implements Comparable<Node>{
+    static List<List<Integer>> adj;
+    
+    static class Node {
+        int idx, cnt;
         
-        int v, cost;
-        
-        public Node(int v, int cost) {
-            this.v = v;
-            this.cost = cost;
-        }
-        
-        @Override
-        public int compareTo(Node n) {
-            return this.cost - n.cost;
+        public Node(int idx, int cnt) {
+            this.idx = idx;
+            this.cnt = cnt;
         }
     }
     
     public int[] solution(int n, int[][] roads, int[] sources, int destination){
         int[] answer = new int[sources.length];
-        
-        N = n;
-        end = destination;
-        
+        dp = new int[n+1];
         adj = new ArrayList<>();
-        for (int i = 0 ; i <= n ; i++) {
-            adj.add(new ArrayList<>());
-        }
-
+        for (int i = 0 ; i <= n ; i++) adj.add(new ArrayList<>());
+        
         for (int i = 0 ; i < roads.length ; i++) {
-            int from = roads[i][0];
-            int to = roads[i][1];
-            adj.get(from).add(new Node(to, 1));
-            adj.get(to).add(new Node(from, 1));
+            int x = roads[i][0];
+            int y = roads[i][1];
+            adj.get(x).add(y);
+            adj.get(y).add(x);
         }
         
-        dijk(destination);
+        solve(n, destination);
         
         for (int i = 0 ; i < sources.length ; i++) {
-            answer[i] = dp[sources[i]] == Integer.MAX_VALUE ? -1 : dp[sources[i]];
+            if (dp[sources[i]] == MAX) answer[i] = -1;
+            else answer[i] = dp[sources[i]];
         }
         
         return answer;
     }
     
-    static void dijk(int end) {
-        PriorityQueue<Node> PQ = new PriorityQueue<>();
-        PQ.add(new Node(end, 0));
+    static void solve(int n, int destination) {
+        PriorityQueue<Node> PQ = new PriorityQueue<>(new Comparator<>(){
+           @Override
+            public int compare(Node n1, Node n2) {
+                return n1.cnt - n2.cnt;
+            }
+        });
+        Arrays.fill(dp, MAX);
+        PQ.add(new Node(destination, 0));
+        dp[destination] = 0;
         
-        dp = new int[N+1];
-        boolean[] visited = new boolean[N+1];
-        
-        Arrays.fill(dp, Integer.MAX_VALUE);
-        dp[end] = 0;
-        
-        while(!PQ.isEmpty()) {
+        while (!PQ.isEmpty()) {
             Node now = PQ.poll();
             
-            if (!visited[now.v]) visited[now.v] = true;
-            
-            for (Node next : adj.get(now.v)) {
-                if (!visited[next.v] && dp[next.v] > now.cost + next.cost) {
-                    dp[next.v] = now.cost + next.cost;
-                    PQ.add(new Node(next.v, dp[next.v]));
+            for (Integer next : adj.get(now.idx)) {
+                if (dp[next] > dp[now.idx] + 1) {
+                    dp[next] = dp[now.idx] + 1;
+                    PQ.add(new Node(next, dp[next]));
                 }
             }
         }
