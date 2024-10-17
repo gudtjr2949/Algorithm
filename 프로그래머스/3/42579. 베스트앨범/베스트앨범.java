@@ -4,9 +4,16 @@ class Solution {
     
     static class Music {
         int idx, cnt;
+        String genre;
+        
         public Music(int idx, int cnt) {
             this.idx = idx;
             this.cnt = cnt;
+        }
+        
+        @Override
+        public String toString() {
+            return String.format("음악 (인덱스 = %d, 횟수 = %d)", idx, idx);
         }
     }
     
@@ -19,9 +26,7 @@ class Solution {
         for(int i = 0; i < plays.length; i++) {
             if(!num.containsKey(genres[i])) {
                 List<Music> list = new ArrayList<>();
-                
                 list.add(new Music(i, plays[i]));
-                
                 music.put(genres[i], list);
                 num.put(genres[i], plays[i]);
             } else {
@@ -31,20 +36,25 @@ class Solution {
         }
         
         List<String> keyList = new ArrayList(num.keySet()); // 장르가 하나씩 리스트에 들어감
-        Collections.sort(keyList, (s1, s2) -> num.get(s2) - (num.get(s1))); // 재생 횟수를 기준으로 내림차순 정렬
+        Collections.sort(keyList, (o1, o2) -> num.get(o2) - num.get(o1));
         
-        for(String key : keyList) {
-            List<Music> list = music.get(key);
-             
-            Collections.sort(list, (m1, m2) -> (m2.cnt - m1.cnt));
- 
-            answer.add(list.get(0).idx);
-            if(list.size() > 1)
-                answer.add(list.get(1).idx);
+        for (String genre : keyList) {
+            Collections.sort(music.get(genre), (o1, o2) -> {
+                if (o2.cnt == o1.cnt) return o1.idx - o2.idx;
+                else return o2.cnt - o1.cnt;
+            });
+            
+            if (music.get(genre).size() == 1) {
+                answer.add(music.get(genre).get(0).idx);
+                continue;
+            }
+            
+            for (int i = 0 ; i < 2 ; i++) {
+                answer.add(music.get(genre).get(i).idx);
+            }
         }
- 
+        
+        
         return answer.stream().mapToInt(i -> i).toArray();
     }
-    
-    
 }
