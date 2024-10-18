@@ -5,36 +5,42 @@ import java.util.Collections;
 import java.util.List;
 
 public class Main {
-	public static void main(String[] args) throws Exception {
-		BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
 
-		long G = Long.parseLong(bf.readLine());
+    static long G;
+    static List<Integer> list;
 
-		long now = 2;
-		long memory = 1;
-		List<Long> list = new ArrayList<>();
+    public static void main(String[] args) throws Exception {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        G = Long.parseLong(bf.readLine());
+        list = new ArrayList<>();
+        solve();
 
-		while (now <= 100000) {
-			long result = (now * now) - (memory * memory);
+        if (list.size() == 0)
+            System.out.println(-1);
+        else {
+            Collections.sort(list);
+            StringBuilder sb = new StringBuilder();
 
-			if (result == G) {
-				list.add(now);
-			}
+            for (Integer num : list)
+                sb.append(num).append("\n");
 
-			if (result <= G) {
-				now++;
-			} else {
-				memory++;
-			}
-		}
+            System.out.println(sb);
+        }
+    }
 
-		Collections.sort(list);
+    static void solve() {
+        int left = 2; // 현재 몸무게
+        int right = 1; // 기억하는 몸무게
 
-		if (list.size() == 0)
-			System.out.println(-1);
-		else {
-			for (int i = 0 ; i < list.size() ; i++)
-				System.out.println(list.get(i));
-		}
-	}
+        while (left <= 100000) {
+            long result = (left * left) - (right * right);
+
+            if (result == G) {
+                list.add(left);
+            }
+
+            if (result > G) right++;
+            else left++;
+        }
+    }
 }
