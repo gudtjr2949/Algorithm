@@ -1,63 +1,61 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 
 public class Main {
 
-    static int N;
-    static ArrayList<Long> positiveArr, negativeArr;
+    static int N, pCnt, nCnt;
+    static long answer;
+    static long[] arr, positive, negative;
 
     public static void main(String[] args) throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+
         N = Integer.parseInt(bf.readLine());
-
-        positiveArr = new ArrayList<>();
-        negativeArr = new ArrayList<>();
-
-        long sum = 0;
-        long one = 0;
+        arr = new long[N];
 
         for (int i = 0 ; i < N ; i++) {
             long num = Long.parseLong(bf.readLine());
-            sum += num;
 
-            if (num > 1) {
-                positiveArr.add(num);
-            } else if (num <= 0){
-                negativeArr.add(num);
-            } else if (num == 1) {
-                one++;
-            }
+            if (num > 1) pCnt++;
+            else if (num <= 0) nCnt++;
+
+            arr[i] = num;
         }
 
-        Collections.sort(positiveArr);
-        Collections.sort(negativeArr);
+        Arrays.sort(arr);
 
-        System.out.println(Math.max(sum, solve() + one));
+        solve();
+
+        System.out.println(answer);
     }
 
-    static long solve() {
-        long sum = 0;
+    static void solve() {
+        positive = new long[pCnt];
+        negative = new long[nCnt];
 
-        for (int i = 0 ; i < negativeArr.size()-1 ; i+=2) {
-            sum += negativeArr.get(i) * negativeArr.get(i+1);
+        int pIdx = 0, nIdx = 0;
+
+        for (int i = 0 ; i < N ; i++) {
+            if (arr[i] > 1) positive[pIdx++] = arr[i];
+            else if (arr[i] == 1) answer++;
+            else negative[nIdx++] = arr[i];
         }
 
-        // 만약에 negativeArr.size() 가 홀수라면 반드시 negativeArr.get(negativeArr.size()-1) 를 sum 에 더해주지 못함
-        if (negativeArr.size() % 2 != 0) {
-            sum += negativeArr.get(negativeArr.size()-1);
+        for (int i = pCnt-1 ; i >= 0 ; i -= 2) {
+            if (i == 0) {
+                answer += positive[i];
+                break;
+            }
+            answer += (positive[i] * positive[i-1]);
         }
 
-        for (int i = positiveArr.size()-1 ; i >= 1 ; i-=2) {
-            sum += positiveArr.get(i) * positiveArr.get(i-1);
+        for (int i = 0 ; i < nCnt ; i += 2) {
+            if (i == nCnt-1) {
+                answer += negative[i];
+                break;
+            }
+            answer += (negative[i] * negative[i+1]);
         }
-
-        // 만약에 positiveArr.size() 가 홀수라면 반드시 positiveArr.get(0) 을 sum 에 더해주지 못함
-        if (positiveArr.size() % 2 != 0) {
-            sum += positiveArr.get(0);
-        }
-
-        return sum;
     }
 }
