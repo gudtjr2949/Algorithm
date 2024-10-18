@@ -5,52 +5,57 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-    static class Person implements Comparable<Person> {
-        int first, second;
+    static int N, answer;
+    static Node[] arr;
+    static class Node {
+        int first, second, rank;
 
-        public Person(int first, int second) {
+        public Node(int first, int second, int rank) {
             this.first = first;
             this.second = second;
-        }
-
-        @Override
-        public int compareTo(Person p) {
-            return this.first - p.first;
+            this.rank = rank;
         }
     }
 
     public static void main(String[] args) throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-        int T = Integer.parseInt(bf.readLine());
         StringBuilder sb = new StringBuilder();
 
-        for (int test = 0 ; test < T ; test++) {
-            int N = Integer.parseInt(bf.readLine());
+        int T = Integer.parseInt(bf.readLine());
 
-            int cnt = N;
-
-            Person[] p = new Person[N];
-
+        while (T-- > 0) {
+            answer = 1;
+            N = Integer.parseInt(bf.readLine());
+            arr = new Node[N];
             for (int i = 0 ; i < N ; i++) {
                 StringTokenizer st = new StringTokenizer(bf.readLine());
-                p[i] = new Person(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
+                arr[i] = new Node(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), 0);
             }
 
-            Arrays.sort(p);
+            solve();
 
-            int recentSecond = p[0].second; // 서류 1등의 면접등수
-
-            for (int i = 1 ; i < N ; i++) {
-                if (p[i].second > recentSecond) {
-                    cnt--;
-                } else {
-                    recentSecond = p[i].second;
-                }
-            }
-
-            sb.append(cnt).append("\n");
+            sb.append(answer).append("\n");
         }
 
         System.out.println(sb);
+    }
+
+    static void solve() {
+        Arrays.sort(arr, (o1, o2) -> o1.first - o2.first);
+
+        for (int i = 0 ; i < N ; i++)
+            arr[i].rank = i;
+
+
+        Arrays.sort(arr, (o1, o2) -> o1.second - o2.second);
+
+        int mostHighRank = arr[0].rank;
+
+        for (int i = 1 ; i < N ; i++) {
+            if (arr[i].rank < mostHighRank) {
+                mostHighRank = arr[i].rank;
+                answer++;
+            }
+        }
     }
 }
