@@ -5,13 +5,13 @@ import java.util.StringTokenizer;
 
 public class Main {
 
+    static int N, M, L, answer;
     static int[] arr;
-    static int N, M, L;
 
     public static void main(String[] args) throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(bf.readLine());
 
+        StringTokenizer st = new StringTokenizer(bf.readLine());
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
         L = Integer.parseInt(st.nextToken());
@@ -21,37 +21,42 @@ public class Main {
         st = new StringTokenizer(bf.readLine());
 
         arr[0] = 0;
-
         for (int i = 1 ; i <= N ; i++) {
             arr[i] = Integer.parseInt(st.nextToken());
         }
-
         arr[N+1] = L;
 
         Arrays.sort(arr);
 
         solve();
+
+        System.out.println(answer);
     }
 
     static void solve() {
         int left = 1;
         int right = L-1;
 
-        while (left <= right) {
-            int mid = (left + right) / 2; // left 위치와 right 위치의 가운데 위치
-            int sum = 0;
+        while (left < right) {
+            int mid = (left + right) / 2;
 
-            for (int i = 1 ; i <= N+1 ; i++) {
-                sum += (arr[i] - arr[i-1] - 1) / mid; // arr[i] 와 arr[i-1] 사이에 mid 만큼 나눴을 때, 총 길이
-            }
-
-            if (sum > M) {
-                left = mid + 1;
+            if (buildRest(mid) > M) {
+                left = mid+1;
             } else {
-                right = mid - 1;
+                answer = mid;
+                right = mid;
             }
         }
+    }
 
-        System.out.println(left);
+    static int buildRest(int mid) {
+        int cnt = 0;
+
+        for (int i = 1 ; i <= N+1 ; i++) {
+            if ((arr[i] - arr[i-1]) % mid == 0) cnt += ((arr[i] - arr[i-1]) / mid) - 1;
+            else cnt += ((arr[i] - arr[i-1]) / mid);
+        }
+
+        return cnt;
     }
 }
