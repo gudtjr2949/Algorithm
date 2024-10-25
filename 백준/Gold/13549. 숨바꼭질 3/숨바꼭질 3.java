@@ -50,7 +50,7 @@ public class Main {
             if (visited[now.idx]) continue;
             visited[now.idx] = true;
 
-            if (now.idx+1 <= 100_000 && !visited[now.idx+1] && dist[now.idx+1] > now.time+1) {
+            if (now.idx+1 < MAX && !visited[now.idx+1] && dist[now.idx+1] > now.time+1) {
                 dist[now.idx+1] = now.time+1;
                 PQ.add(new Node(now.idx+1, now.time+1));
             }
@@ -59,7 +59,7 @@ public class Main {
                 PQ.add(new Node(now.idx-1, now.time+1));
             }
 
-            if (now.idx * 2 <= 100_000 && !visited[now.idx*2] && dist[now.idx*2] > now.time) {
+            if (now.idx * 2 < MAX && !visited[now.idx*2] && dist[now.idx*2] > now.time) {
                 dist[now.idx*2] = now.time;
                 PQ.add(new Node(now.idx*2, now.time));
             }
