@@ -7,7 +7,7 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-    static int start, end, MAX = 100_001*2, answer;
+    static int start, end, MAX = 100_001, answer;
     static class Node {
         int idx, time;
         public Node(int idx, int time) {
