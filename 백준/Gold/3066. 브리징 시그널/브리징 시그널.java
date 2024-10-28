@@ -13,29 +13,15 @@ public class Main {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
         StringBuilder sb = new StringBuilder();
 
-        int Test = Integer.parseInt(bf.readLine());
-
-        for (int T = 0 ; T < Test ; T++) {
+        int T = Integer.parseInt(bf.readLine());
+        while (T-- > 0) {
             N = Integer.parseInt(bf.readLine());
-
             arr = new int[N];
-
             list = new ArrayList<>();
-
-            for (int i = 0 ; i < N ; i++) {
+            for (int i = 0 ; i < N ; i++)
                 arr[i] = Integer.parseInt(bf.readLine());
-            }
 
-            list.add(arr[0]);
-
-            for (int i = 1 ; i < N ; i++) {
-                if (arr[i] > list.get(list.size()-1)) {
-                    list.add(arr[i]);
-                } else {
-                    int idx = binarySearch(0, list.size(), arr[i]);
-                    list.set(idx, arr[i]);
-                }
-            }
+            solve();
 
             sb.append(list.size()).append("\n");
         }
@@ -43,20 +29,31 @@ public class Main {
         System.out.println(sb);
     }
 
-    static int binarySearch(int left, int right, int key) {
-        int idx = 0;
+    static void solve() {
+        for (int i = 0 ; i < N ; i++) {
+            if (list.size() == 0 || list.get(list.size()-1) < arr[i]) {
+                list.add(arr[i]);
+            } else {
+                int idx = findIdx(arr[i]);
+                list.set(idx, arr[i]);
+            }
+        }
+    }
 
-        while (left <= right) {
+    static int findIdx(int target) {
+        int left = 0;
+        int right = list.size()-1;
+
+        while (left < right) {
             int mid = (left + right) / 2;
 
-            if (list.get(mid) < key) {
+            if (list.get(mid) < target) {
                 left = mid+1;
             } else {
-                idx = mid;
-                right = mid-1;
+                right = mid;
             }
         }
 
-        return idx;
+        return left;
     }
 }
