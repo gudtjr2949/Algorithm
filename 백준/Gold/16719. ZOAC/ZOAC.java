@@ -5,6 +5,7 @@ public class Main {
 
     static String s;
     static boolean[] visited;
+    static StringBuilder sb = new StringBuilder();
 
     public static void main(String[] args) throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
@@ -12,14 +13,8 @@ public class Main {
         visited = new boolean[s.length()];
 
         dfs(0, s.length());
-    }
 
-    static boolean check() {
-        for (int i = 0 ; i < visited.length ; i++) {
-            if (!visited[i]) return true;
-        }
-
-        return false;
+        System.out.println(sb);
     }
 
     static void dfs(int left, int right) {
@@ -42,9 +37,9 @@ public class Main {
     static void print() {
         for (int i = 0 ; i < s.length() ; i++) {
             if (visited[i]) {
-                System.out.print(s.charAt(i));
+                sb.append(s.charAt(i));
             }
         }
-        System.out.println();
+        sb.append("\n");
     }
 }
