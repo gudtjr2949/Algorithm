@@ -3,72 +3,67 @@ import java.io.InputStreamReader;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Deque;
-import java.util.StringTokenizer;
 
 public class Main {
 
     static int N;
-    static String p;
+    static String P;
     static StringBuilder sb;
-    static Deque<String> dq = new ArrayDeque<>();
+    static Deque<String> deque;
 
     public static void main(String[] args) throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+
         int T = Integer.parseInt(bf.readLine());
+
         sb = new StringBuilder();
 
         while (T-- > 0) {
-            p = bf.readLine();
+            P = bf.readLine();
             N = Integer.parseInt(bf.readLine());
-            String s1 = bf.readLine();
-            String s2 = s1.replace("[", "");
-            String s3 = s2.replace("]", "");
-            StringTokenizer st = new StringTokenizer(s3, ",");
+            deque = new ArrayDeque<>();
+            String s = bf.readLine();
+            s = s.substring(1, s.length()-1);
+            String[] tmp = s.split(",");
 
-            sb.append(solve(st)).append("\n");
+            for (int i = 0 ; i < N ; i++) {
+                deque.add(tmp[i]);
+            }
+
+            solve();
         }
 
         System.out.println(sb);
     }
 
-    static String solve(StringTokenizer st) {
-        for (int i = 0; i < N ; i++) {
-            dq.add(st.nextToken());
-        }
-
-        boolean error = false;
-        int first = 1;
-
-        for (int i = 0 ; i < p.length() ; i++) {
-            if (p.charAt(i) == 'R') {
-                first *= -1;
+    static void solve() {
+        boolean dir = true; // TRUE : 앞에서, FALSE : 뒤에서
+        for (int i = 0 ; i < P.length() ; i++) {
+            if (P.charAt(i) == 'R') {
+                dir = !dir;
             } else {
-                if (dq.size() == 0) {
-                    return "error";
+                if (deque.isEmpty()) {
+                    sb.append("error").append("\n");
+                    return;
                 }
 
-                if (first == 1)
-                    dq.pollFirst();
-                else
-                    dq.pollLast();
+                if (dir) deque.pollFirst();
+                else deque.pollLast();
             }
         }
 
-        StringBuilder s = new StringBuilder();
-        s.append("[");
-        while (!dq.isEmpty()) {
-            if (first == 1) {
-                s.append(dq.pollFirst()).append(",");
+        sb.append("[");
+        while (!deque.isEmpty()) {
+            if (dir) {
+                sb.append(deque.pollFirst());
             } else {
-                s.append(dq.pollLast()).append(",");
+                sb.append(deque.pollLast());
             }
+
+            if (deque.size() != 0)
+                sb.append(",");
         }
 
-        if (s.length() > 1)
-            s.deleteCharAt(s.length()-1);
-
-        s.append("]");
-
-        return s.toString();
+        sb.append("]").append("\n");
     }
 }
