@@ -31,17 +31,11 @@ public class Main {
         int idx = 0;
         for (int i = 0 ; i < N ; i++) {
             for (int j = 0 ; j < N ; j++) {
-                arr1[idx++] = A[i] + B[j];
-            }
-        }
-
-        idx = 0;
-        for (int i = 0 ; i < N ; i++) {
-            for (int j = 0 ; j < N ; j++) {
+                arr1[idx] = A[i] + B[j];
                 arr2[idx++] = C[i] + D[j];
             }
         }
-
+        
         Arrays.sort(arr1);
         Arrays.sort(arr2);
 
