@@ -5,65 +5,67 @@ import java.util.*;
 public class Main {
 
     static int N;
-    static int[] edgeCnt, used;
-    static List<List<Part>> adj = new ArrayList<>();
-
-    static class Part {
-        int num, need;
-
-        public Part(int num, int need) {
+    static int[] use, edge;
+    static boolean[] basic;
+    static List<List<Node>> adj;
+    static class Node {
+        int num, cnt;
+        public Node(int num, int cnt) {
             this.num = num;
-            this.need = need;
+            this.cnt = cnt;
         }
     }
 
     public static void main(String[] args) throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(bf.readLine());
-
-        edgeCnt = new int[N+1];
-        used = new int[N+1];
-
-        int[] first = new int[N+1];
-
-        for (int i = 0 ; i <= N ; i++) {
-            adj.add(new ArrayList<>());
-        }
+        use = new int[N+1];
+        basic = new boolean[N+1];
+        edge = new int[N+1];
+        Arrays.fill(basic, true);
+        adj = new ArrayList<>();
+        for (int i = 0 ; i <= N ; i++) adj.add(new ArrayList<>());
 
         int M = Integer.parseInt(bf.readLine());
-
 
         for (int i = 0 ; i < M ; i++) {
             StringTokenizer st = new StringTokenizer(bf.readLine());
             int X = Integer.parseInt(st.nextToken());
             int Y = Integer.parseInt(st.nextToken());
             int K = Integer.parseInt(st.nextToken());
-            adj.get(X).add(new Part(Y, K));
-            first[X]++;
-            edgeCnt[Y]++;
+            adj.get(X).add(new Node(Y, K));
+            basic[X] = false;
+            edge[Y]++;
         }
 
         solve();
 
+        StringBuilder sb = new StringBuilder();
+
         for (int i = 1 ; i <= N ; i++) {
-            if (first[i] == 0) {
-                System.out.println(i + " " + used[i]);
+            if (basic[i]) {
+                sb.append(i).append(" ").append(use[i]).append("\n");
             }
         }
+
+        System.out.println(sb);
     }
 
     static void solve() {
-        Queue<Part> Q = new LinkedList<>();
-        Q.add(new Part(N, 1));
-        used[N] = 1;
+        Queue<Node> Q = new LinkedList<>();
+
+        Q.add(new Node(N, 1));
+        use[N] = 1;
 
         while (!Q.isEmpty()) {
-            Part now = Q.poll();
+            Node now = Q.poll();
 
-            for (Part next : adj.get(now.num)) {
-                used[next.num] += used[now.num] * next.need;
-                edgeCnt[next.num]--;
-                if (edgeCnt[next.num] == 0) Q.add(new Part(next.num, used[next.num]));
+            for (Node next : adj.get(now.num)) {
+                use[next.num] += now.cnt * next.cnt;
+                edge[next.num]--;
+                if (edge[next.num] == 0) {
+                    Q.add(new Node(next.num, use[next.num]));
+                }
             }
         }
     }
