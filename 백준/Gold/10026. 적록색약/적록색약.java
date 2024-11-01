@@ -41,8 +41,6 @@ public class Main {
         }
 
         System.out.println(answer[0] + " " + answer[1]);
-
-
     }
 
     static void dfs(int x, int y, int idx) {
