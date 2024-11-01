@@ -7,10 +7,11 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-        int T = Integer.parseInt(bf.readLine());
         StringBuilder sb = new StringBuilder();
 
-        while (T-- > 0) {
+        int N = Integer.parseInt(bf.readLine());
+
+        for (int i = 0 ; i < N ; i++) {
             s = bf.readLine();
             sb.append(solve(0, s.length()-1, false)).append("\n");
         }
@@ -18,13 +19,13 @@ public class Main {
         System.out.println(sb);
     }
 
-    static int solve(int left, int right, boolean delete) {
+    static int solve(int left, int right, boolean use) {
         while (left < right) {
             if (s.charAt(left) == s.charAt(right)) {
                 left++;
                 right--;
             } else {
-                if (!delete) {
+                if (!use) {
                     if (solve(left, right-1, true) == 0 || solve(left+1, right, true) == 0) {
                         return 1;
                     } else {
@@ -35,6 +36,7 @@ public class Main {
                 }
             }
         }
+
         return 0;
     }
 }
