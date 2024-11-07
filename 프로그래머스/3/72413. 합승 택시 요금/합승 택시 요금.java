@@ -2,74 +2,44 @@ import java.util.*;
 
 class Solution {
     
-    static int N;
-    static List<List<Node>> adj;
-    static class Node implements Comparable<Node> {
-        int v, cost;
-        
-        public Node(int v, int cost) {
-            this.v = v;
-            this.cost = cost;
-        }
-        
-        @Override
-        public int compareTo(Node n) {
-            return this.cost - n.cost;
-        }
-    }
+    static int answer, MAX = 100_000_000;
+    static int[][] dp;
     
     public int solution(int n, int s, int a, int b, int[][] fares) {
-        int answer = 0;
+        dp = new int[n+1][n+1];
         
-        N = n;
-        
-        adj = new ArrayList<>();
-        for (int i = 0 ; i <= n ; i++) adj.add(new ArrayList<>());
+        for (int i = 0 ; i <= n ; i++) {
+            Arrays.fill(dp[i], MAX);
+            dp[i][i] = 0;
+        }
         
         for (int i = 0 ; i < fares.length ; i++) {
             int from = fares[i][0];
             int to = fares[i][1];
             int cost = fares[i][2];
-            adj.get(from).add(new Node(to, cost));
-            adj.get(to).add(new Node(from, cost));
+            dp[from][to] = cost;
+            dp[to][from] = cost;
         }
         
-        int[] S = solve(s);
-        int[] A = solve(a);
-        int[] B = solve(b);
+        solve(n, s, a, b);
         
-        answer = Integer.MAX_VALUE;
-                
-        for (int i = 1 ; i <= n ; i++) {
-            answer = Math.min(answer, S[i] + A[i] + B[i]);
-        }
-                
         return answer;
     }
     
-    static int[] solve(int start) {
-        PriorityQueue<Node> PQ = new PriorityQueue<>();
-        PQ.add(new Node(start, 0));
-        
-        boolean[] visited = new boolean[N+1];
-        int[] dp = new int[N+1];
-        
-        Arrays.fill(dp, Integer.MAX_VALUE);
-        dp[start] = 0;
-        
-        while(!PQ.isEmpty()) {
-            Node now = PQ.poll();
-            
-            if (!visited[now.v]) visited[now.v] = true;
-            
-            for (Node next : adj.get(now.v)) {
-                if (!visited[next.v] && dp[next.v] > now.cost + next.cost) {
-                    dp[next.v] = now.cost + next.cost;
-                    PQ.add(new Node(next.v, dp[next.v]));
+    static void solve(int n, int s, int a, int b) {
+        for (int k = 1 ; k <= n ; k++) {
+            for (int i = 1 ; i <= n ; i++) {
+                for (int j = 1 ; j <= n ; j++) {
+                    if (i != j && dp[i][j] > dp[i][k] + dp[k][j]) {
+                        dp[i][j] = dp[i][k] + dp[k][j];
+                    }
                 }
             }
         }
         
-        return dp;
+        answer = dp[s][a] + dp[s][b];
+        
+         for (int i = 1 ; i <= n ; i++) 
+            answer = Math.min(answer, dp[s][i] + dp[i][a] + dp[i][b]);
     }
 }
