@@ -4,33 +4,33 @@ class Solution {
     
     static int start;
     static boolean first;
-    static int[] element;
     static Set<Integer> set;
     
     public int solution(int[] elements) {
-        int answer = 0;
-
         set = new HashSet<>();
         
-        element = elements;
-        
-        for (int i = 0 ; i < element.length ; i++) {
+        for (int i = 0 ; i < elements.length ; i++) {
             start = i;
             first = true;
-            dfs(i, element[i]);
+            dfs(i, elements[i], elements);
         }
                 
         return set.size();
     }
     
-    static void dfs(int idx, int sum) {
-        if (!first && idx == start) return;
-        set.add(sum);
+    static void dfs(int idx, int sum, int[] elements) {
+        if (idx == start && !first) {
+            return;
+        }
         
-        if (idx == element.length-1) idx = -1;
-                
+        if (!set.contains(sum))
+            set.add(sum);
+        
+        if (idx == elements.length-1) idx = -1;
+        
         first = false;
         
-        dfs(idx+1, sum + element[idx+1]);
+        dfs(idx+1, sum + elements[idx+1], elements);
     }
+    
 }
