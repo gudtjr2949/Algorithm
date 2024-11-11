@@ -4,48 +4,53 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-    static long K, N, MAX, answer;
-    static long[] arr;
+    static int K, N, MAX;
+    static long answer;
+    static int[] arr;
 
     public static void main(String[] args) throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(bf.readLine());
-        K = Long.parseLong(st.nextToken());
-        N = Long.parseLong(st.nextToken());
-
-        arr = new long[(int) K];
-
+        K = Integer.parseInt(st.nextToken());
+        N = Integer.parseInt(st.nextToken());
+        arr = new int[K];
         for (int i = 0 ; i < K ; i++) {
-            arr[i] = Long.parseLong(bf.readLine());
+            arr[i] = Integer.parseInt(bf.readLine());
             MAX = Math.max(MAX, arr[i]);
         }
 
         solve();
+
         System.out.println(answer);
     }
 
-    static void solve() {
+    private static void solve() {
         long left = 0;
         long right = MAX;
 
         while (left <= right) {
             long mid = (left + right) / 2;
-            long cnt = cntLine(mid);
-            if (cnt >= N) {
-                left = mid+1;
-                answer = Math.max(answer, mid);
-            } else {
+
+            long cnt = findLine(mid);
+
+            if (cnt < N) {
                 right = mid-1;
+            } else {
+                answer = mid;
+                left = mid+1;
             }
         }
     }
 
-    static long cntLine(long mid) {
+    private static long findLine(long mid) {
+        long cnt = 0;
+
         if (mid == 0) return N+1;
-        long result = 0;
+
         for (int i = 0 ; i < K ; i++) {
-            result += arr[i] / mid;
+            cnt += arr[i] / mid;
         }
-        return result;
+
+        return cnt;
     }
 }
