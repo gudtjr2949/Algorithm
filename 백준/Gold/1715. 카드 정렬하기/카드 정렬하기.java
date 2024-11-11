@@ -3,28 +3,30 @@ import java.io.InputStreamReader;
 import java.util.PriorityQueue;
 
 public class Main {
+
+    static int answer;
+    static PriorityQueue<Integer> PQ;
+
     public static void main(String[] args) throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-        int N = Integer.parseInt(bf.readLine());
-        PriorityQueue<Integer> PQ = new PriorityQueue<>();
+        PQ = new PriorityQueue<>();
 
+        int N = Integer.parseInt(bf.readLine());
         for (int i = 0 ; i < N ; i++) {
             PQ.add(Integer.parseInt(bf.readLine()));
         }
 
-        long sum = 0;
+        solve();
 
-        while (!PQ.isEmpty()) {
-            int num1 = PQ.poll();
-            if (PQ.isEmpty()) {
-                break;
-            }
-            int num2 = PQ.poll();
-            int tmpSum = num1 + num2;
-            sum += tmpSum;
-            PQ.add(tmpSum);
+        System.out.println(answer);
+    }
+
+    static void solve() {
+        while (PQ.size() != 1) {
+            int A = PQ.poll();
+            int B = PQ.poll();
+            PQ.add(A + B);
+            answer += A + B;
         }
-
-        System.out.println(sum);
     }
 }
