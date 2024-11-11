@@ -4,7 +4,8 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-    static int N, M, answer, sum;
+    static int N, M, MAX;
+    static long answer;
     static int[] arr;
 
     public static void main(String[] args) throws Exception {
@@ -13,11 +14,10 @@ public class Main {
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
         arr = new int[N];
-
         st = new StringTokenizer(bf.readLine());
         for (int i = 0 ; i < N ; i++) {
             arr[i] = Integer.parseInt(st.nextToken());
-            sum += arr[i];
+            MAX = Math.max(MAX, arr[i]);
         }
 
         solve();
@@ -25,38 +25,35 @@ public class Main {
         System.out.println(answer);
     }
 
-    static void solve() {
-        int left = 0;
-        int right = 100_000 * 10_000 + 1;
+    private static void solve() {
+        long left = MAX;
+        long right = Integer.MAX_VALUE;
 
-        while (left <= right) {
-            int mid = (left + right) / 2;
+        while (left < right) {
+            long mid = (left + right) / 2;
 
-            if (countBluray(mid) > M) {
+            if (countCD(mid) > M)
                 left = mid+1;
-            } else {
-                answer = mid;
-                right = mid-1;
-            }
+            else
+                right = mid;
         }
+
+        answer = left;
     }
 
-    static int countBluray(int mid) {
-        int cnt = 1;
-        int length = 0;
+    private static long countCD(long mid) {
+        int cnt = 0;
+        long sum = 0;
 
         for (int i = 0 ; i < N ; i++) {
-            if (arr[i] > mid) {
-                return M+1;
-            }
-
-            if (length + arr[i] > mid) {
-                length = arr[i];
+            if (sum + arr[i] > mid) {
                 cnt++;
-            } else {
-                length += arr[i];
+                sum = 0;
             }
+            sum += arr[i];
         }
+
+        if (sum != 0) cnt++;
 
         return cnt;
     }
