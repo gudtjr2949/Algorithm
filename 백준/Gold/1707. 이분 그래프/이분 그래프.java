@@ -40,6 +40,8 @@ public class Main {
             }
 
             for (int i = 1 ; i <= V ; i++) {
+                if (!possible) break;
+                
                 if (input[i] == 0) {
                     input[i] = 1;
                     dfs(i, 1);
