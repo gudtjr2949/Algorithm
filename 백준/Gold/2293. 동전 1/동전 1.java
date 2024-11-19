@@ -1,5 +1,6 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class Main {
@@ -14,10 +15,14 @@ public class Main {
         K = Integer.parseInt(st.nextToken());
         arr = new int[N];
         dp = new int[K+1];
-        for (int i = 0 ; i < N ; i++)
+        for (int i = 0 ; i < N ; i++) {
             arr[i] = Integer.parseInt(bf.readLine());
+        }
+
+        Arrays.sort(arr);
 
         dp[0] = 1;
+
         solve();
 
         System.out.println(dp[K]);
