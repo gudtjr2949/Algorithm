@@ -40,7 +40,7 @@ public class Main {
         for (int i = 0 ; i < N ; i++) {
             if (PQ.isEmpty() || PQ.peek().t > arr[i].s) {
                 PQ.add(arr[i]);
-            } else if (PQ.peek().t <= arr[i].s) {
+            } else {
                 PQ.poll();
                 PQ.add(arr[i]);
             }
