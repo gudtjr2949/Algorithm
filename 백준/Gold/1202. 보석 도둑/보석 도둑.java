@@ -6,14 +6,14 @@ public class Main {
 
     static int N, K;
     static long answer;
-    static int[] C;
+    static int[] bags;
     static Node[] jews;
     static class Node {
-        int M, V;
+        int m, v;
 
         public Node(int m, int v) {
-            M = m;
-            V = v;
+            this.m = m;
+            this.v = v;
         }
     }
 
@@ -22,24 +22,16 @@ public class Main {
         StringTokenizer st = new StringTokenizer(bf.readLine());
         N = Integer.parseInt(st.nextToken());
         K = Integer.parseInt(st.nextToken());
-
-        C = new int[K];
         jews = new Node[N];
-
+        bags = new int[K];
         for (int i = 0 ; i < N ; i++) {
             st = new StringTokenizer(bf.readLine());
             jews[i] = new Node(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
         }
 
-        Arrays.sort(jews, (o1, o2) -> {
-            if (o1.M == o2.M) return o2.V - o1.V;
-            else return o1.M - o2.M;
-        });
-
-        for (int i = 0 ; i < K ; i++)
-            C[i] = Integer.parseInt(bf.readLine());
-
-        Arrays.sort(C);
+        for (int i = 0 ; i < K ; i++) {
+            bags[i] = Integer.parseInt(bf.readLine());
+        }
 
         solve();
 
@@ -47,18 +39,19 @@ public class Main {
     }
 
     static void solve() {
-        int idx = 0; // 보석 idx
+        Arrays.sort(jews, (o1, o2) -> o1.m - o2.m);
+        Arrays.sort(bags);
 
-        PriorityQueue<Integer> PQ = new PriorityQueue<>(Collections.reverseOrder());
+        Queue<Integer> PQ = new PriorityQueue<>(Collections.reverseOrder());
+
+        int jewIdx = 0;
 
         for (int i = 0 ; i < K ; i++) {
-            while (idx < N && C[i] >= jews[idx].M) {
-                PQ.add(jews[idx].V);
-                idx++;
+            while (jewIdx < N && bags[i] >= jews[jewIdx].m) {
+                PQ.add(jews[jewIdx++].v);
             }
 
             if (!PQ.isEmpty()) answer += PQ.poll();
         }
-
     }
 }
