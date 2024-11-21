@@ -5,17 +5,21 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-    static int N, M, answer;
+    static int N, C;
+    static long answer;
     static int[] arr;
 
     public static void main(String[] args) throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(bf.readLine());
         N = Integer.parseInt(st.nextToken());
-        M = Integer.parseInt(st.nextToken());
+        C = Integer.parseInt(st.nextToken());
+
         arr = new int[N];
-        for (int i = 0 ; i < N ; i++)
+
+        for (int i = 0 ; i < N ; i++) {
             arr[i] = Integer.parseInt(bf.readLine());
+        }
 
         Arrays.sort(arr);
 
@@ -25,13 +29,13 @@ public class Main {
     }
 
     static void solve() {
-        int left = 0;
-        int right = Integer.MAX_VALUE;
+        long left = 0;
+        long right = 1_000_000_001;
 
         while (left < right) {
-            int mid = (left + right) / 2;
+            long mid = (left + right) / 2;
 
-            if (countHub(mid) < M) {
+            if (countHub(mid) < C) {
                 right = mid;
             } else {
                 answer = mid;
@@ -40,9 +44,9 @@ public class Main {
         }
     }
 
-    static int countHub(int mid) {
-        int cnt = 1;
+    static int countHub(long mid) {
         int idx = 0;
+        int cnt = 1;
 
         for (int i = 1 ; i < N ; i++) {
             if (arr[i] - arr[idx] >= mid) {
