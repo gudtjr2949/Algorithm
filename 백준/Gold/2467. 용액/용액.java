@@ -16,10 +16,9 @@ public class Main {
 
         StringTokenizer st = new StringTokenizer(bf.readLine());
 
-        for (int i = 0 ; i < N ; i++)
+        for (int i = 0 ; i < N ; i++) {
             arr[i] = Integer.parseInt(st.nextToken());
-
-        Arrays.sort(arr);
+        }
 
         solve();
 
@@ -35,17 +34,14 @@ public class Main {
             int sum = arr[left] + arr[right];
 
             if (min > Math.abs(sum)) {
+                min = Math.abs(sum);
                 answer[0] = arr[left];
                 answer[1] = arr[right];
-                min = Math.abs(sum);
-            }
-
-
-            if (sum < 0) left++;
-            else {
                 if (sum == 0) return;
-                right--;
             }
+
+            if (sum > 0) right--;
+            else left++;
         }
     }
 }
