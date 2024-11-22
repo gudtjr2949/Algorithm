@@ -1,13 +1,12 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.List;
 import java.util.StringTokenizer;
 
 public class Main {
 
     static int N, M;
-    static int[] parents;
+    static int[] parents, plan;
 
     public static void main(String[] args) throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
@@ -15,45 +14,46 @@ public class Main {
         M = Integer.parseInt(bf.readLine());
 
         parents = new int[N+1];
-
         for (int i = 0 ; i <= N ; i++) parents[i] = i;
 
         for (int i = 1 ; i <= N ; i++) {
             StringTokenizer st = new StringTokenizer(bf.readLine());
-
             for (int j = 1 ; j <= N ; j++) {
-                if (Integer.parseInt(st.nextToken()) == 1) {
+                int num = Integer.parseInt(st.nextToken());
+                if (num == 1) {
                     union(i, j);
                 }
             }
         }
 
+        plan = new int[M];
         StringTokenizer st = new StringTokenizer(bf.readLine());
+        for (int i = 0 ; i < M ; i++) {
+            plan[i] = Integer.parseInt(st.nextToken());
+        }
 
-        boolean possible = true;
+        if (solve()) System.out.println("YES");
+        else System.out.println("NO");
+    }
 
-        int first = Integer.parseInt(st.nextToken());
-
+    static boolean solve() {
         for (int i = 1 ; i < M ; i++) {
-            int next = Integer.parseInt(st.nextToken());
-            if (parents[first] != parents[next]) {
-                possible = false;
-                break;
+            if (parents[plan[i]] != parents[plan[i-1]]) {
+                return false;
             }
         }
 
-        System.out.println(possible ? "YES" : "NO");
+        return true;
     }
 
-    static void union(int i, int j) {
-        i = find(i);
-        j = find(j);
+    static void union(int a, int b) {
+        a = find(a);
+        b = find(b);
 
-        if (i < j) {
-            parents[j] = i;
-        } else {
-            parents[i] = j;
-        }
+        if (a == b) return;
+
+        if (a > b) parents[a] = b;
+        else parents[b] = a;
     }
 
     static int find(int num) {
