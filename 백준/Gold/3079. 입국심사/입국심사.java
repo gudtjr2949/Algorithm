@@ -30,13 +30,13 @@ public class Main {
         long left = 0;
         long right = M * MIN;
 
-        while (left <= right) {
+        while (left < right) {
             long mid = (left + right) / 2;
 
             if (check(mid) < M) {
                 left = mid+1;
             } else {
-                right = mid-1;
+                right = mid;
             }
         }
 
