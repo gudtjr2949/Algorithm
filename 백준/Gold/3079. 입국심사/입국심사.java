@@ -1,54 +1,57 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class Main {
 
-    static long N, M;
+    static long N, M, MIN = Integer.MAX_VALUE;
+    static long answer;
     static long[] arr;
 
     public static void main(String[] args) throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-
         StringTokenizer st = new StringTokenizer(bf.readLine());
+
         N = Long.parseLong(st.nextToken());
         M = Long.parseLong(st.nextToken());
 
         arr = new long[(int) N];
-
-        for (int i = 0 ; i < (int) N ; i++) {
+        for (int i = 0 ; i < N ; i++) {
             arr[i] = Long.parseLong(bf.readLine());
+            MIN = Math.min(MIN, arr[i]);
         }
 
-        Arrays.sort(arr);
+        solve();
 
-        System.out.println(binarySearch());
+        System.out.println(answer);
     }
 
-    static long binarySearch() {
+    static void solve() {
         long left = 0;
-        long right = M * arr[(int) N-1];
-        long answer = 0;
+        long right = M * MIN;
 
         while (left <= right) {
             long mid = (left + right) / 2;
 
-            long cnt = 0;
-            for (int i = 0 ; i < N ; i++) {
-                cnt += mid / arr[i];
-
-                if (cnt >= M) break;
-            }
-
-            if (cnt < M) {
-                left = mid + 1;
+            if (check(mid) < M) {
+                left = mid+1;
             } else {
-                answer = mid;
-                right = mid - 1;
+                right = mid-1;
             }
         }
 
-        return answer;
+        answer = left;
+    }
+
+    static long check(long mid) {
+        long result = 0;
+
+        for (int i = 0 ; i < arr.length ; i++) {
+            result += mid / arr[i];
+
+            if (result > M) return M+1;
+        }
+
+        return result;
     }
 }
