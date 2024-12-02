@@ -4,12 +4,15 @@ import java.util.*;
 
 public class Main {
 
-    static int N, M, from, to, answer, MAX;
+    static int N, start, end, MAX, answer;
+    static boolean possible;
+    static boolean[] visited;
     static List<List<Node>> adj;
     static class Node {
-        int dest, weight;
-        public Node(int dest, int weight) {
-            this.dest = dest;
+        int idx, weight;
+
+        public Node(int idx, int weight) {
+            this.idx = idx;
             this.weight = weight;
         }
     }
@@ -18,25 +21,23 @@ public class Main {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(bf.readLine());
         N = Integer.parseInt(st.nextToken());
-        M = Integer.parseInt(st.nextToken());
+        int M = Integer.parseInt(st.nextToken());
         adj = new ArrayList<>();
-        for (int i = 0 ; i <= N ; i++) {
-            adj.add(new ArrayList<>());
-        }
+        for (int i = 0 ; i <= N ; i++) adj.add(new ArrayList<>());
 
         for (int i = 0 ; i < M ; i++) {
             st = new StringTokenizer(bf.readLine());
-            int from = Integer.parseInt(st.nextToken());
-            int to = Integer.parseInt(st.nextToken());
-            int weight = Integer.parseInt(st.nextToken());
-            adj.get(from).add(new Node(to, weight));
-            adj.get(to).add(new Node(from, weight));
-            MAX = Math.max(MAX, weight);
+            int a = Integer.parseInt(st.nextToken());
+            int b = Integer.parseInt(st.nextToken());
+            int c = Integer.parseInt(st.nextToken());
+            MAX = Math.max(MAX, c);
+            adj.get(a).add(new Node(b, c));
+            adj.get(b).add(new Node(a, c));
         }
 
         st = new StringTokenizer(bf.readLine());
-        from = Integer.parseInt(st.nextToken());
-        to = Integer.parseInt(st.nextToken());
+        start = Integer.parseInt(st.nextToken());
+        end = Integer.parseInt(st.nextToken());
 
         solve();
 
@@ -49,8 +50,10 @@ public class Main {
 
         while (left <= right) {
             int mid = (left + right) / 2;
-
-            if (bfs(mid)) {
+            visited = new boolean[N+1];
+            possible = false;
+            check(start, mid);
+            if (possible) {
                 left = mid+1;
             } else {
                 right = mid-1;
@@ -60,27 +63,18 @@ public class Main {
         answer = right;
     }
 
-    static boolean bfs(int mid) {
-        Queue<Integer> Q = new LinkedList<>();
-        Q.add(from);
-        boolean[] visited = new boolean[N+1];
-        visited[from] = true;
-
-        while (!Q.isEmpty()) {
-            int now = Q.poll();
-
-            if (now == to) {
-                return true;
-            }
-
-            for (Node next : adj.get(now)) {
-                if (next.weight >= mid && !visited[next.dest]) {
-                    visited[next.dest] = true;
-                    Q.add(next.dest);
-                }
-            }
+    static void check(int idx, int weight) {
+        if (idx == end) {
+            possible = true;
+            return;
         }
 
-        return false;
+        visited[idx] = true;
+
+        for (Node next : adj.get(idx)) {
+            if (next.weight >= weight && !visited[next.idx]) {
+                check(next.idx, weight);
+            }
+        }
     }
 }
