@@ -1,11 +1,14 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 public class Main {
 
     static int N, D, K, C, answer;
-    static int[] arr, eat;
+    static int[] arr, cnt;
+    static Set<Integer> set;
 
     public static void main(String[] args) throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
@@ -15,8 +18,10 @@ public class Main {
         K = Integer.parseInt(st.nextToken());
         C = Integer.parseInt(st.nextToken());
 
+        set = new HashSet<>();
+
         arr = new int[N];
-        eat = new int[D+1];
+        cnt = new int[D+1];
 
         for (int i = 0 ; i < N ; i++) {
             arr[i] = Integer.parseInt(bf.readLine());
@@ -28,39 +33,28 @@ public class Main {
     }
 
     static void solve() {
-
-        int cnt = 0;
+        set.add(C);
+        cnt[C]++;
 
         for (int i = 0 ; i < K ; i++) {
-            if (eat[arr[i]] == 0) {
-                cnt++;
-            }
-            eat[arr[i]]++;
+            set.add(arr[i]);
+            cnt[arr[i]]++;
         }
 
-        answer = cnt;
+        answer = set.size();
 
-        for (int i = 1 ; i <= N ; i++) {
-            if (answer <= cnt) {
-                if (eat[C] == 0) { // 쿠폰 아직 안씀
-                    answer = cnt + 1;
-                } else { // eat[C] == 0 라면 쿠폰을 써도 똑같음
-                    answer = cnt;
-                }
+        for (int i = 1 ; i < N ; i++) {
+            if (--cnt[arr[i-1]] == 0) set.remove(arr[i-1]);
+
+            if (i+K-1 < N) {
+                cnt[arr[i+K-1]]++;
+                set.add(arr[i+K-1]);
+            } else {
+                cnt[arr[(i+K-1)-N]]++;
+                set.add(arr[(i+K-1)-N]);
             }
 
-            // 마지막 초밥 더함
-            int end = (i + K - 1) % N;
-            if (eat[arr[end]] == 0) {
-                cnt++;
-            }
-            eat[arr[end]]++;
-
-            // 처음 초밥 뺌
-            eat[arr[i-1]]--;
-            if (eat[arr[i-1]] == 0) {
-                cnt--;
-            }
+            answer = Math.max(answer, set.size());
         }
     }
 }
