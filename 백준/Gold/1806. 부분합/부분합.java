@@ -4,44 +4,43 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-    static int N, S, answer;
-    static int[] arr;
+    static int N, S, answer = Integer.MAX_VALUE;
+    static int[] prefix;
 
     public static void main(String[] args) throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(bf.readLine());
         N = Integer.parseInt(st.nextToken());
         S = Integer.parseInt(st.nextToken());
-
-        arr = new int[N+1];
-        answer = Integer.MAX_VALUE;
+        int[] arr = new int[N];
+        prefix = new int[N+1];
 
         st = new StringTokenizer(bf.readLine());
+
         for (int i = 0 ; i < N ; i++) {
             arr[i] = Integer.parseInt(st.nextToken());
-
-            if (arr[i] == S) {
-                answer = 1;
-            }
+            prefix[i+1] = prefix[i] + arr[i];
         }
 
         solve();
 
-        System.out.println(answer == Integer.MAX_VALUE ? 0 : answer);
+        if (answer == Integer.MAX_VALUE) answer = 0;
+
+        System.out.println(answer);
     }
 
     static void solve() {
-        int left = 0;
-        int right = 0;
+        int left = 1;
+        int right = 1;
 
-        int prefixSum = 0;
+        while (left <= right && right <= N) {
+            int sum = prefix[right] - prefix[left-1];
 
-        while (left <= N && right <= N) {
-            if (prefixSum >= S) {
-                answer = Math.min(answer, right - left);
-                prefixSum -= arr[left++];
+            if (sum < S) {
+                right++;
             } else {
-                prefixSum += arr[right++];
+                answer = Math.min(answer, right - left + 1);
+                left++;
             }
         }
     }
