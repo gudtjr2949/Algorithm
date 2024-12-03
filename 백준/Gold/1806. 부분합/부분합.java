@@ -33,7 +33,7 @@ public class Main {
         int left = 1;
         int right = 1;
 
-        while (left <= right && right <= N) {
+        while (left <= N && right <= N && left <= right) {
             int sum = prefix[right] - prefix[left-1];
 
             if (sum < S) {
