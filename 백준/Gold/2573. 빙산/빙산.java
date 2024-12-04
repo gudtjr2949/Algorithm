@@ -16,6 +16,7 @@ public class Main {
         M = Integer.parseInt(st.nextToken());
 
         map = new int[N][M];
+        visited = new boolean[N][M];
 
         for (int i = 0 ; i < N ; i++) {
             st = new StringTokenizer(bf.readLine());
@@ -24,73 +25,80 @@ public class Main {
             }
         }
 
-        solve();
+        while (true) {
+            int cnt = countMountain();
+            if (cnt == 0) {
+                answer = 0;
+                break;
+            } else if (cnt >= 2) {
+                break;
+            }
+
+            melt();
+            answer++;
+        }
 
         System.out.println(answer);
     }
 
-    static void solve() {
-        while (true) {
-            visited = new boolean[N][M];
-            int cnt = 0;
-            for (int i = 0 ; i < N ; i++) {
-                for (int j = 0 ; j < M ; j++) {
-                    if (map[i][j] != 0 && !visited[i][j]) {
-                        visited[i][j] = true;
-                        dfs(j, i);
-                        cnt++;
-                    }
-                }
-            }
-
-            if (cnt >= 2) break;
-
-            if (cnt == 0) {
-                answer = 0;
-                break;
-            }
-
-            melting();
-
-            answer++;
-        }
-    }
-
-    static void dfs(int x, int y) {
-        for (int i = 0 ; i < 4 ; i++) {
-            int nx = x + dx[i];
-            int ny = y + dy[i];
-            if (nx >= 0 && nx < M && ny >= 0 && ny < N && map[ny][nx] != 0 && !visited[ny][nx]) {
-                visited[ny][nx] = true;
-                dfs(nx, ny);
-            }
-        }
-    }
-
-    static void melting() {
+    static void melt() {
         int[][] tmp = new int[N][M];
 
         for (int i = 0 ; i < N ; i++) {
             for (int j = 0 ; j < M ; j++) {
                 if (map[i][j] != 0) {
-                    int cnt = 0;
                     for (int k = 0 ; k < 4 ; k++) {
                         int nx = j + dx[k];
                         int ny = i + dy[k];
-                        if (nx >= 0 && nx < M && ny >= 0 && ny < N && map[ny][nx] == 0) cnt++;
+
+                        if (!isRange(nx, ny)) continue;
+
+                        if (map[ny][nx] == 0) tmp[i][j]++;
                     }
-                    tmp[i][j] = cnt;
                 }
             }
         }
 
         for (int i = 0 ; i < N ; i++) {
             for (int j = 0 ; j < M ; j++) {
-               if (tmp[i][j] != 0) {
-                   map[i][j] -= tmp[i][j];
-                   if (map[i][j] < 0) map[i][j] = 0;
-               }
+                if (tmp[i][j] != 0) {
+                    map[i][j] -= tmp[i][j];
+                    if (map[i][j] < 0 ) map[i][j] = 0;
+                }
             }
         }
+    }
+
+    static int countMountain() {
+        visited = new boolean[N][M];
+
+        int cnt = 0;
+        for (int i = 0 ; i < N ; i++) {
+            for (int j = 0 ; j < M ; j++) {
+                if (map[i][j] != 0 && !visited[i][j]) {
+                    dfs(j, i);
+                    cnt++;
+                }
+            }
+        }
+
+        return cnt;
+    }
+
+    static void dfs(int x, int y) {
+        visited[y][x] = true;
+
+        for (int i = 0 ; i < 4 ; i++) {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+
+            if (isRange(nx, ny) && !visited[ny][nx] && map[ny][nx] != 0) {
+                dfs(nx, ny);
+            }
+        }
+    }
+
+    static boolean isRange(int x, int y) {
+        return x >= 0 && x < M && y >= 0 && y < N;
     }
 }
