@@ -1,63 +1,55 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.StringTokenizer;
 
 public class Main {
-
     static int N;
-    static Line[] lines;
-    static class Line implements Comparable<Line> {
-        int x, y;
-
-        public Line(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        @Override
-        public int compareTo(Line n) {
-            if (this.x == n.x) return this.y - n.y;
-            else return this.x - n.x;
-        }
-    }
+    static long answer;
+    static long[][] arr;
 
     public static void main(String[] args) throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(bf.readLine());
-
-        lines = new Line[N];
+        arr = new long[N][2];
 
         for (int i = 0 ; i < N ; i++) {
             StringTokenizer st = new StringTokenizer(bf.readLine());
-            lines[i] = new Line(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
+            long x = Long.parseLong(st.nextToken());
+            long y = Long.parseLong(st.nextToken());
+            arr[i][0] = x;
+            arr[i][1] = y;
         }
 
-        Arrays.sort(lines);
+        Arrays.sort(arr, (o1, o2) -> {
+            if (o1[0] == o2[0]) return (int) (o1[1] - o2[1]);
+            return (int) (o1[0] - o2[0]);
+        });
 
-        System.out.println(solve());
+        solve();
+
+        System.out.println(answer);
     }
 
-    static long solve() {
-        long sum = 0;
+    static void solve() {
+        long min = arr[0][0];//이전 선의 x좌표
+        long max = arr[0][1];//이전 선의 y좌표
 
-        int preX = lines[0].x;
-        int preY = lines[0].y;
+        answer = max - min;
 
-        sum = preY - preX;
+        for(int i = 1 ; i < N ; i++) {
+            if (min <= arr[i][0] && arr[i][1] <= max) { //현재 선이 이전 선에 포함된다면
+                continue;
+            } else if (arr[i][0] < max) { //현재 선의 시작점이 이전 선에 포함된다면
+                answer += arr[i][1] - max;
+            } else { //현재 선과 이전 선이 겹치지 않는다면
+                answer += arr[i][1] - arr[i][0];
+            }
 
-        for (int i = 1 ; i < N ; i++) {
-            int nowX = lines[i].x;
-            int nowY = lines[i].y;
-
-            if (nowX >= preX && nowY <= preY) continue;
-            else if (nowX > preY) sum += nowY - nowX;
-            else if (nowX <= preY && nowY > preY) sum += nowY - preY;
-
-            preX = nowX;
-            preY = nowY;
+            min = arr[i][0];
+            max = arr[i][1];
         }
-
-        return sum;
     }
 }
