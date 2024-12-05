@@ -1,43 +1,55 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class Main {
 
     static int N, M;
-    static int[] coin;
-    static int[] dp;
+    static int[] coins;
+    static int[][] dp;
 
     public static void main(String[] args) throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
         int T = Integer.parseInt(bf.readLine());
+
         StringBuilder sb = new StringBuilder();
 
         while (T-- > 0) {
             N = Integer.parseInt(bf.readLine());
+
+            coins = new int[N+1];
             StringTokenizer st = new StringTokenizer(bf.readLine());
-            coin = new int[N];
-            for (int i = 0 ; i < N ; i++) {
-                coin[i] = Integer.parseInt(st.nextToken());
+
+            for (int i = 1 ; i <= N ; i++) {
+                coins[i] = Integer.parseInt(st.nextToken());
             }
+
+            Arrays.sort(coins);
 
             M = Integer.parseInt(bf.readLine());
 
-            dp = new int[M+1];
-            dp[0] = 1;
+            dp = new int[N+1][M+1];
+
+            for (int i = 0 ; i <= N ; i++) {
+                dp[i][0] = 1;
+            }
 
             solve();
 
-            sb.append(dp[M]).append("\n");
+            sb.append(dp[N][M]).append("\n");
         }
 
         System.out.println(sb);
     }
 
     static void solve() {
-        for (int i = 0 ; i < N ; i++) {
-            for (int j = coin[i] ; j <= M ; j++) {
-                dp[j] += dp[j - coin[i]];
+        for (int i = 1 ; i <= N ; i++) {
+            for (int j = 0 ; j <= M ; j++) {
+                dp[i][j] = dp[i-1][j];
+
+                if (j - coins[i] >= 0)
+                    dp[i][j] += dp[i][j-coins[i]];
             }
         }
     }
