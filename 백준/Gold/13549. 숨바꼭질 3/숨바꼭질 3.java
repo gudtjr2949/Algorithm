@@ -46,13 +46,7 @@ public class Main {
                 return;
             }
 
-            int nIdx = now.idx*2;
-            if (nIdx < MAX && dp[nIdx] > now.time) {
-                dp[nIdx] = now.time;
-                PQ.add(new Node(nIdx, now.time));
-            }
-
-            nIdx = now.idx+1;
+            int nIdx = now.idx+1;
             if (nIdx < MAX && dp[nIdx] > now.time+1) {
                 dp[nIdx] = now.time+1;
                 PQ.add(new Node(nIdx, now.time+1));
@@ -63,6 +57,13 @@ public class Main {
                 dp[nIdx] = now.time+1;
                 PQ.add(new Node(nIdx, now.time+1));
             }
+
+            nIdx = now.idx*2;
+            if (nIdx < MAX && dp[nIdx] > now.time) {
+                dp[nIdx] = now.time;
+                PQ.add(new Node(nIdx, now.time));
+            }
+
         }
     }
 }
