@@ -35,8 +35,6 @@ public class Main {
     static void solve() {
         Queue<Node> PQ = new PriorityQueue<>((o1, o2) -> o1.time - o2.time);
         dp[N] = 0;
-        boolean[] visited = new boolean[MAX];
-        visited[N] = true;
 
         PQ.add(new Node(N, 0));
 
@@ -50,23 +48,19 @@ public class Main {
 
             int nIdx = now.idx*2;
             if (nIdx < MAX && dp[nIdx] > now.time) {
-//            if (nIdx < MAX && !visited[nIdx]) {
                 dp[nIdx] = now.time;
-                visited[nIdx] = true;
                 PQ.add(new Node(nIdx, now.time));
             }
 
             nIdx = now.idx+1;
             if (nIdx < MAX && dp[nIdx] > now.time+1) {
                 dp[nIdx] = now.time+1;
-                visited[nIdx] = true;
                 PQ.add(new Node(nIdx, now.time+1));
             }
 
             nIdx = now.idx-1;
             if (nIdx >= 0 && dp[nIdx] > now.time+1) {
                 dp[nIdx] = now.time+1;
-                visited[nIdx] = true;
                 PQ.add(new Node(nIdx, now.time+1));
             }
         }
