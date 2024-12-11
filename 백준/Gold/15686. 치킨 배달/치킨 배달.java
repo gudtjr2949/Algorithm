@@ -7,13 +7,9 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-    static int N, M, answer;
-    static int[][] map;
-    static int[] input;
+    static int N, M, answer, MAX = 100_00_001;
+    static List<Node> home, chicken;
     static boolean[] visited;
-    static List<Node> stores;
-    static List<Node> homes;
-
     static class Node {
         int x, y;
 
@@ -36,23 +32,23 @@ public class Main {
         StringTokenizer st = new StringTokenizer(bf.readLine());
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
-        map = new int[N][N];
-        homes = new ArrayList<>();
-        stores = new ArrayList<>();
-        answer = Integer.MAX_VALUE;
 
-        for (int i = 0; i < N; i++) {
+        home = new ArrayList<>();
+        chicken = new ArrayList<>();
+
+        answer = MAX;
+
+        for (int i = 0  ; i < N ; i++) {
             st = new StringTokenizer(bf.readLine());
-            for (int j = 0; j < N; j++) {
-                map[i][j] = Integer.parseInt(st.nextToken());
+            for (int j = 0 ; j < N ; j++) {
+                int num = Integer.parseInt(st.nextToken());
 
-                if (map[i][j] == 1) homes.add(new Node(j, i));
-                else if (map[i][j] == 2) stores.add(new Node(j, i));
+                if (num == 1) home.add(new Node(j, i));
+                else if (num == 2) chicken.add(new Node(j, i));
             }
         }
 
-        input = new int[M];
-        visited = new boolean[stores.size()];
+        visited = new boolean[chicken.size()];
 
         dfs(0, 0);
 
@@ -61,13 +57,12 @@ public class Main {
 
     static void dfs(int idx, int cur) {
         if (idx == M) {
-            calculateDistance();
+            solve();
             return;
         }
 
-        for (int i = cur ; i < stores.size() ; i++) {
+        for (int i = cur ; i < chicken.size() ; i++) {
             if (!visited[i]) {
-                input[idx] = i;
                 visited[i] = true;
                 dfs(idx+1, i+1);
                 visited[i] = false;
@@ -75,15 +70,16 @@ public class Main {
         }
     }
 
-    static void calculateDistance() {
+    static void solve() {
         int sum = 0;
 
-        for (Node home : homes) {
-            int min = Integer.MAX_VALUE;
-            for (int i = 0 ; i < M ; i++) {
-                Node store = stores.get(input[i]);
-                int distance = Math.abs(home.x - store.x) + Math.abs(home.y - store.y);
-                min = Math.min(min, distance);
+        for (int i = 0 ; i < home.size() ; i++) {
+            int min = MAX;
+
+            for (int j = 0 ; j < chicken.size() ; j++) {
+                if (visited[j]) {
+                    min = Math.min(min, Math.abs(chicken.get(j).x - home.get(i).x) + Math.abs(chicken.get(j).y - home.get(i).y));
+                }
             }
 
             sum += min;
