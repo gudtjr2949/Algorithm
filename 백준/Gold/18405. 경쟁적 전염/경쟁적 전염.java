@@ -1,103 +1,96 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
 
-	static int N, K, S, X, Y;
-	static int[] nx = {0, 1, 0, -1};
-	static int[] ny = {-1, 0, 1, 0};
-	static int[][] map;
-	static Queue<Point> PQ;
+    static int N, endTime, endX, endY;
+    static int[] dx = {0, 1, 0, -1}, dy = {-1, 0, 1, 0};
+    static int[][] map;
+    static class Node {
+        int time, type, x, y;
 
-	static class Point implements Comparable<Point>{
-		int x, y, time, value;
+        public Node(int time, int type, int x, int y) {
+            this.time = time;
+            this.type = type;
+            this.x = x;
+            this.y = y;
+        }
+    }
 
-		public Point(int x, int y, int time, int value) {
-			this.x = x;
-			this.y = y;
-			this.time = time;
-			this.value = value;
-		}
 
-		@Override
-		public int compareTo(Point o) {
-			return this.value - o.value;
-		}
-	}
+    public static void main(String[] args) throws Exception {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(bf.readLine());
 
-	public static void main(String[] args) throws Exception {
-		BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st = new StringTokenizer(bf.readLine());
+        N = Integer.parseInt(st.nextToken());;
+        int K = Integer.parseInt(st.nextToken());
 
-		N = Integer.parseInt(st.nextToken());
-		K = Integer.parseInt(st.nextToken());
+        map = new int[N][N];
+        for (int i = 0 ; i < N ; i++) {
+            st = new StringTokenizer(bf.readLine());
+            for (int j = 0 ; j < N ; j++) {
+                map[i][j] = Integer.parseInt(st.nextToken());
+            }
+        }
 
-		PQ = new PriorityQueue<>();
+        st = new StringTokenizer(bf.readLine());
+        endTime = Integer.parseInt(st.nextToken());
+        endY = Integer.parseInt(st.nextToken())-1;
+        endX = Integer.parseInt(st.nextToken())-1;
 
-		map = new int[N][N];
+        bfs();
 
-		for (int i = 0 ; i < N ; i++) {
-			st = new StringTokenizer(bf.readLine());
+        System.out.println(map[endY][endX]);
+    }
 
-			for (int j = 0 ; j < N ; j++) {
-				map[i][j] = Integer.parseInt(st.nextToken());
-				if (map[i][j] != 0) {
-					PQ.add(new Point(j, i, 0, map[i][j]));
-				}
-			}
-		}
+    static void bfs() {
+        Queue<Node> PQ = new PriorityQueue<>((o1, o2) -> {
+            if (o1.time == o2.time) return o1.type - o2.type;
+            return o1.time - o2.time;
+        });
 
-		st = new StringTokenizer(bf.readLine());
+        for (int i = 0 ; i < N ; i++) {
+            for (int j = 0 ; j < N ; j++) {
+                if (map[i][j] != 0) {
+                    PQ.add(new Node(0, map[i][j], j, i));
+                }
+            }
+        }
 
-		S = Integer.parseInt(st.nextToken());
-		X = Integer.parseInt(st.nextToken());
-		Y = Integer.parseInt(st.nextToken());
+        int time = 0;
 
-		bfs();
+        while (!PQ.isEmpty()) {
 
-		System.out.println(map[X-1][Y-1]);
-	}
+            if (time == endTime) break;
 
-	private static void bfs() {
-		while (!PQ.isEmpty()) {
-			int size = PQ.size();
+            int size = PQ.size();
+            for (int i = 0 ; i < size ; i++) {
+                Node now = PQ.poll();
 
-			Queue<Point> tempQ = new LinkedList<>();
+                if (now.x == endX && now.y == endY) {
+                    map[now.y][now.x] = now.type;
+                    return;
+                }
 
-			for (int i = 0 ; i < size ; i++) {
-				Point p = PQ.poll();
+                for (int j = 0 ; j < 4 ; j++) {
+                    int nx = now.x + dx[j];
+                    int ny = now.y + dy[j];
 
-				int x = p.x;
-				int y = p.y;
-				int time = p.time;
-				int value = p.value;
+                    if (isRange(nx, ny) && map[ny][nx] == 0) {
+                        map[ny][nx] = now.type;
+                        PQ.add(new Node(now.time+1, now.type, nx, ny));
+                    }
+                }
+            }
 
-				if (time == S) {
-					return;
-				}
+            time++;
+        }
+    }
 
-				for (int j = 0 ; j < 4 ; j++) {
-					int dx = x + nx[j];
-					int dy = y + ny[j];
-
-					if (dx >= 0 && dx < N && dy >= 0 && dy < N && map[dy][dx] == 0) {
-						map[dy][dx] = map[y][x];
-						tempQ.add(new Point(dx, dy, time+1, value));
-					}
-				}
-			}
-
-			if (map[X-1][Y-1] != 0) {
-				return;
-			}
-
-			while (!tempQ.isEmpty()) {
-				PQ.add(tempQ.poll());
-			}
-		}
-	}
+    static boolean isRange(int x, int y) {
+        return x >= 0 && x < N && y >= 0 && y < N;
+    }
 }
