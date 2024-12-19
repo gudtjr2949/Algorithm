@@ -6,20 +6,24 @@ import java.util.StringTokenizer;
 public class Main {
 
     static int N, answer;
-    static int[] arr;
+    static long[] arr;
 
     public static void main(String[] args) throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(bf.readLine());
-        arr = new int[N];
-        StringTokenizer st = new StringTokenizer(bf.readLine());
-        for (int i = 0 ; i < N ; i++)
-            arr[i] = Integer.parseInt(st.nextToken());
 
+        arr = new long[N];
+
+        StringTokenizer st = new StringTokenizer(bf.readLine());
+
+        for (int i = 0 ; i < N ; i++) {
+            arr[i] = Long.parseLong(st.nextToken());
+        }
 
         Arrays.sort(arr);
 
         solve();
+
 
         System.out.println(answer);
     }
@@ -29,20 +33,25 @@ public class Main {
             int left = 0;
             int right = N-1;
 
+            long key = arr[i];
+
             while (left < right) {
                 long sum = arr[left] + arr[right];
 
-                if (sum > arr[i]) right--;
-                else if (sum < arr[i]) left++;
-                else {
-                    if (left != i && right != i) {
+                if (sum == key) {
+                    if (left == i) left++;
+                    else if (right == i) right--;
+                    else {
                         answer++;
                         break;
                     }
-                    else if (right == i) right--;
-                    else left++;
+                } else if (sum < key) {
+                    left++;
+                } else {
+                    right--;
                 }
             }
         }
+
     }
 }
