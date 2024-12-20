@@ -5,61 +5,49 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-    static int N;
-    static Work[] works;
-    static class Work implements Comparable<Work> {
-        int T, S;
-
-        public Work(int t, int s) {
-            T = t;
-            S = s;
-        }
-
-        @Override
-        public String toString() {
-            return "Work{" +
-                    "T=" + T +
-                    ", S=" + S +
-                    '}';
-        }
-
-        @Override
-        public int compareTo(Work w) {
-            return w.S - this.S;
+    static int N, answer;
+    static Node[] arr;
+    static class Node {
+        int t, s;
+        public Node(int t, int s) {
+            this.t = t;
+            this.s = s;
         }
     }
 
     public static void main(String[] args) throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(bf.readLine());
-
-        works = new Work[N];
+        arr = new Node[N];
 
         for (int i = 0 ; i < N ; i++) {
             StringTokenizer st = new StringTokenizer(bf.readLine());
-            works[i] = new Work(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
+            int t = Integer.parseInt(st.nextToken());
+            int s = Integer.parseInt(st.nextToken());
+            arr[i] = new Node(t, s);
         }
 
-        Arrays.sort(works);
+        solve();
 
-        System.out.println(solve());
+        System.out.println(answer);
     }
 
-    static int solve() {
-        int curTime = works[0].S;
+    static void solve() {
+        Arrays.sort(arr, (o1, o2) -> {
+            if (o1.s == o2.s) return o1.t - o2.t;
+            return o2.s - o1.s;
+        });
 
-        for (int i = 0 ; i < N ; i++) {
-            if (curTime > works[i].S) {
-                curTime = works[i].S - works[i].T;
+        answer = arr[0].s - arr[0].t; // answer는 i번째 일을 가능한 늦게 시작하는 시간
+
+        for (int i = 1 ; i < N ; i++) {
+            if (arr[i].s < answer) { // 이전 일과 i번째 일이 무관한 경우, answer를 i번째 일을 기준으로 변경
+                answer = arr[i].s - arr[i].t;
             } else {
-                curTime -= works[i].T;
+                answer -= arr[i].t;
             }
         }
 
-        if (curTime < 0) {
-            return -1;
-        }
-
-        return curTime;
+        if (answer < 0) answer = -1;
     }
 }
