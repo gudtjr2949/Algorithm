@@ -4,38 +4,63 @@ import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class Main {
+
+    static int N, answer;
+    static int[] arr, prefix;
+
     public static void main(String[] args) throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-        int N = Integer.parseInt(bf.readLine());
-
-        int[] arr = new int[N+1];
-        int[] prefixSum = new int[N+1];
-
+        N = Integer.parseInt(bf.readLine());
+        arr = new int[N];
+        prefix = new int[N+1];
         StringTokenizer st = new StringTokenizer(bf.readLine());
 
-        arr[1] = Integer.parseInt(st.nextToken());
+        for (int i = 0 ; i < N ; i++) {
+            arr[i] = Integer.parseInt(st.nextToken());
+        }
 
-        prefixSum[1] = arr[1];
+        prefix[1] = arr[0];
 
         for (int i = 2 ; i <= N ; i++) {
-            arr[i] = Integer.parseInt(st.nextToken());
-            prefixSum[i] = prefixSum[i-1] + arr[i];
-        }
-
-        int answer = 0;
-
-        for (int i = 2 ; i < N ; i++) {
-            answer = Math.max(answer, (prefixSum[N] - arr[1] - arr[i]) + (prefixSum[N] - prefixSum[i]));
+            prefix[i] = prefix[i-1] + arr[i-1];
         }
 
         for (int i = 2 ; i < N ; i++) {
-            answer = Math.max(answer, (prefixSum[i] - arr[1]) + (prefixSum[N] - arr[N] - prefixSum[i-1]));
-        }
-
-        for (int i = 2 ; i < N ; i++) {
-            answer = Math.max(answer, (prefixSum[i] - arr[i]) + (prefixSum[N] - arr[N] - arr[i]));
+            bee_honey_bee(i);
+            bee_bee_honey(i);
+            honey_bee_bee(i);
         }
 
         System.out.println(answer);
+    }
+
+    static void bee_honey_bee(int start) {
+        int left = 1; // 왼쪽 벌
+        int right = N; // 오른쪽 벌
+        int honey = start; // 꿀
+
+        int sum = prefix[honey] - prefix[left] + prefix[right-1] - prefix[honey] + arr[start-1];
+
+        answer = Math.max(answer, sum);
+    }
+
+    static void bee_bee_honey(int start) {
+        int left = 1;
+        int right = start;
+        int honey = N;
+
+        int sum = prefix[honey] - prefix[left] + prefix[honey] - prefix[right] - arr[start-1];
+
+        answer = Math.max(answer, sum);
+    }
+
+    static void honey_bee_bee(int start) {
+        int left = start;
+        int right = N;
+        int honey = 1;
+
+        int sum = prefix[left-1] - prefix[honey-1] + prefix[right-1] - prefix[honey-1] - arr[start-1];
+
+        answer = Math.max(answer, sum);
     }
 }
