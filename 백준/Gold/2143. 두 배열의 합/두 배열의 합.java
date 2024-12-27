@@ -7,28 +7,28 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-    static int N, M;
-    static long T, answer;
-    static long[] A, B;
+    static int N, M, T;
+    static long answer;
+    static int[] A, B;
     static List<Long> prefixA, prefixB;
 
     public static void main(String[] args) throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-        T = Long.parseLong(bf.readLine());
+        T = Integer.parseInt(bf.readLine());
         N = Integer.parseInt(bf.readLine());
-        A = new long[N];
+        A = new int[N];
         prefixA = new ArrayList<>();
         StringTokenizer st = new StringTokenizer(bf.readLine());
         for (int i = 0 ; i < N ; i++) {
-            A[i] = Long.parseLong(st.nextToken());
+            A[i] = Integer.parseInt(st.nextToken());
         }
 
         M = Integer.parseInt(bf.readLine());
-        B = new long[M];
+        B = new int[M];
         prefixB = new ArrayList<>();
         st = new StringTokenizer(bf.readLine());
         for (int i = 0 ; i < M ; i++) {
-            B[i] = Long.parseLong(st.nextToken());
+            B[i] = Integer.parseInt(st.nextToken());
         }
 
         makePrefix();
