@@ -1,117 +1,90 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.StringTokenizer;
 
 public class Main {
 
+    static int N, M;
     static long T, answer;
-    static long[] sumA, sumB;
-    static int N, M, lenA, lenB;
-    static long[] prefixA, prefixB;
+    static long[] A, B;
+    static List<Long> prefixA, prefixB;
 
     public static void main(String[] args) throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-
-        answer = 0;
-
         T = Long.parseLong(bf.readLine());
-
         N = Integer.parseInt(bf.readLine());
-
-        long[] A = new long[N];
-        prefixA = new long[N+1];
-        prefixA[0] = 0;
-        lenA = 0;
-
+        A = new long[N];
+        prefixA = new ArrayList<>();
         StringTokenizer st = new StringTokenizer(bf.readLine());
-
         for (int i = 0 ; i < N ; i++) {
             A[i] = Long.parseLong(st.nextToken());
-            prefixA[i+1] = prefixA[i] + A[i];
-            lenA += i+1;
         }
-
-        sumA = new long[lenA];
 
         M = Integer.parseInt(bf.readLine());
-
-        long[] B = new long[M];
-        prefixB = new long[M+1];
-        prefixB[0] = 0;
-        lenB = 0;
-
+        B = new long[M];
+        prefixB = new ArrayList<>();
         st = new StringTokenizer(bf.readLine());
-
         for (int i = 0 ; i < M ; i++) {
             B[i] = Long.parseLong(st.nextToken());
-            prefixB[i+1] = prefixB[i] + B[i];
-            lenB += i+1;
         }
 
-        sumB = new long[lenB];
+        makePrefix();
 
-        getSumArr();
-
-        getCount();
+        solve();
 
         System.out.println(answer);
     }
 
-    // A와 B에서 구할 수 있는 부분 합 배열 만들기
-    static void getSumArr() {
-        int idx = 0;
-        // A배열
-        for (int i = 1 ; i < N+1 ; i++) {
-            for (int j = i ; j < N+1 ; j++) {
-                sumA[idx] = prefixA[j] - prefixA[i-1];
-                idx++;
-            }
-        }
+    static void solve() {
+        int left = 0;
+        int right = prefixB.size()-1;
 
-        Arrays.sort(sumA);
+        while (left < prefixA.size() && right >= 0) {
+            long sum = prefixA.get(left) + prefixB.get(right);
 
-        idx = 0;
-        // B배열
-        for (int i = 1 ; i < M+1 ; i++) {
-            for (int j = i ; j < M+1 ; j++) {
-                sumB[idx] = prefixB[j] - prefixB[i-1];
-                idx++;
-            }
-        }
-
-        Arrays.sort(sumB);
-    }
-
-    static void getCount() {
-        int start = 0;
-        int end = sumB.length - 1;
-
-        while (start < sumA.length && end >= 0) {
-            long sum = sumA[start] + sumB[end];
-
-            if (sum == T) {
-                // sumA 과, sumB 에 똑같은 수가 있는지 찾아야 함
-                long a = sumA[start];
+            if (sum > T) right--;
+            else if (sum < T) left++;
+            else {
                 long cntA = 0;
-                while (start < sumA.length && sumA[start] == a) {
-                    start++;
+                long preA = prefixA.get(left);
+                while (left < prefixA.size() && preA == prefixA.get(left)) {
                     cntA++;
+                    left++;
                 }
 
-                long b = sumB[end];
                 long cntB = 0;
-                while (end >= 0 && sumB[end] == b) {
-                    end--;
+                long preB = prefixB.get(right);
+                while (right >= 0 && preB == prefixB.get(right)) {
                     cntB++;
+                    right--;
                 }
 
                 answer += cntA * cntB;
-            } else if (sum > T) {
-                end--;
-            } else {
-                start++;
             }
         }
+    }
+
+    static void makePrefix() {
+        for (int i = 0 ; i < N ; i++) {
+            long sum = 0;
+            for (int j = i ; j < N ; j++) {
+                sum += A[j];
+                prefixA.add(sum);
+            }
+        }
+
+        for (int i = 0 ; i < M ; i++) {
+            long sum = 0;
+            for (int j = i ; j < M ; j++) {
+                sum += B[j];
+                prefixB.add(sum);
+            }
+        }
+
+        Collections.sort(prefixA);
+        Collections.sort(prefixB);
     }
 }
