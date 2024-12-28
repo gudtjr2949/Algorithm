@@ -1,90 +1,91 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.StringTokenizer;
 
 public class Main {
 
     static int N;
-    static List<List<Integer>> adj;
+    static List<List<Integer>> tree;
     static int[] depth, parents;
+    static boolean[] visited;
+    static StringBuilder sb = new StringBuilder();
 
     public static void main(String[] args) throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-        StringBuilder sb = new StringBuilder();
-
         N = Integer.parseInt(bf.readLine());
-        adj = new ArrayList<>();
-        for (int i = 0 ; i <= N ; i++)
-            adj.add(new ArrayList<>());
 
-
-        for (int i = 0 ; i < N-1 ; i++) {
-            StringTokenizer st = new StringTokenizer(bf.readLine());
-            int n1 = Integer.parseInt(st.nextToken());
-            int n2 = Integer.parseInt(st.nextToken());
-            adj.get(n1).add(n2);
-            adj.get(n2).add(n1);
+        tree = new ArrayList<>();
+        for (int i = 0 ; i <= N ; i++) {
+            tree.add(new ArrayList<>());
         }
 
         depth = new int[N+1];
         parents = new int[N+1];
+        visited = new boolean[N+1];
 
-        depth[1] = 1;
-        parents[1] = 1;
+        for (int i = 0 ; i < N-1 ; i++) {
+            StringTokenizer st = new StringTokenizer(bf.readLine());
 
-        bfs();
+            int a = Integer.parseInt(st.nextToken());
+            int b = Integer.parseInt(st.nextToken());
+
+            tree.get(a).add(b);
+            tree.get(b).add(a);
+        }
+
+        visited[1] = true;
+        dfs(1, 0);
 
         int M = Integer.parseInt(bf.readLine());
-
         for (int i = 0 ; i < M ; i++) {
             StringTokenizer st = new StringTokenizer(bf.readLine());
-            int n1 = Integer.parseInt(st.nextToken());
-            int n2 = Integer.parseInt(st.nextToken());
-            sb.append(lcs(n1, n2)).append("\n");
+
+            int a = Integer.parseInt(st.nextToken());
+            int b = Integer.parseInt(st.nextToken());
+
+            // b가 무조건 깊이가 깊음
+            if (depth[a] > depth[b]) {
+                int tmp = a;
+                a = b;
+                b = tmp;
+            }
+
+            solve(a, b);
         }
 
         System.out.println(sb);
     }
 
-    static void bfs() {
-        Queue<Integer> Q = new LinkedList<>();
-        Q.add(1);
-        boolean[] visited = new boolean[N+1];
-        visited[1] = true;
+    static void solve(int a, int b) {
+        int depthA = depth[a];
+        int depthB = depth[b];
 
-        while (!Q.isEmpty()) {
-            int parent = Q.poll();
-
-            for (int child : adj.get(parent)) {
-                if (!visited[child]) {
-                    visited[child] = true;
-                    depth[child] = depth[parent]+1;
-                    parents[child] = parent;
-                    Q.add(child);
-                }
+        if (depthA != depthB) {
+            while (depthA != depthB) {
+                b = parents[b];
+                depthB = depth[b];
             }
         }
+
+        while (a != b) {
+            a = parents[a];
+            b = parents[b];
+        }
+
+        sb.append(a).append("\n");
     }
 
-    // n2가 무조건 깊은 노드
-    static int lcs(int n1, int n2) {
-        if (depth[n1] > depth[n2]) {
-            int tmp = n1;
-            n1 = n2;
-            n2 = tmp;
+    static void dfs(int idx, int floor) {
+        for (int next : tree.get(idx)) {
+            if (!visited[next]) {
+                visited[next] = true;
+                depth[next] = floor+1;
+                parents[next] = idx;
+                dfs(next, floor+1);
+            }
         }
-
-        while (depth[n1] != depth[n2]) {
-            n2 = parents[n2];
-        }
-
-        if (n1 == n2) return n1;
-
-        while (parents[n1] != parents[n2]) {
-            n1 = parents[n1];
-            n2 = parents[n2];
-        }
-
-        return parents[n1];
     }
 }
