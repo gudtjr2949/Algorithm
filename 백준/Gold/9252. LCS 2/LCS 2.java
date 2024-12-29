@@ -1,18 +1,18 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 
 public class Main {
 
-    static int N, M;
+    static int N, M, length;
     static String s1, s2;
-    static StringBuilder sb;
     static int[][] dp;
+    static StringBuilder sb = new StringBuilder();
 
     public static void main(String[] args) throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
         s1 = bf.readLine();
         s2 = bf.readLine();
+
         N = s1.length();
         M = s2.length();
 
@@ -20,24 +20,8 @@ public class Main {
 
         solve();
 
-        sb = new StringBuilder();
-
-        findLSC(N, M);
-
-        System.out.println(dp[N][M]);
-        System.out.println(sb);
-    }
-
-    static void findLSC(int i, int j) {
-        if (dp[i][j] == 0) return;
-
-        if (s1.charAt(i-1) == s2.charAt(j-1)) {
-            findLSC(i-1, j-1);
-            sb.append(s1.charAt(i-1));
-        } else {
-            if (dp[i-1][j] < dp[i][j-1]) findLSC(i, j-1);
-            else findLSC(i-1, j);
-        }
+        System.out.println(length);
+        System.out.println(sb.reverse());
     }
 
     static void solve() {
@@ -48,6 +32,22 @@ public class Main {
                 } else {
                     dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1]);
                 }
+
+                length = Math.max(length, dp[i][j]);
+            }
+        }
+
+
+        // findAnswer
+        while (N > 0 && M > 0) {
+            if (s1.charAt(N-1) == s2.charAt(M-1)) {
+                sb.append(s1.charAt(N-1));
+                N--;
+                M--;
+            } else if (dp[N][M] == dp[N-1][M]) {
+                N--;
+            } else if (dp[N][M] == dp[N][M-1]) {
+                M--;
             }
         }
     }
