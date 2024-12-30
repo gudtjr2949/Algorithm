@@ -4,49 +4,52 @@ import java.util.Stack;
 import java.util.StringTokenizer;
 
 public class Main {
+
+    static int N;
+    static int[] answer;
+    static Stack<Integer> stack1, stack2;
+    static StringBuilder sb = new StringBuilder();
+
     public static void main(String[] args) throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-        int N = Integer.parseInt(bf.readLine());
-        int[] arr = new int[N];
-        int[] nge = new int[N];
+        N = Integer.parseInt(bf.readLine());
+        answer = new int[N];
+        stack1 = new Stack<>();
+        stack2 = new Stack<>();
 
         StringTokenizer st = new StringTokenizer(bf.readLine());
-
         for (int i = 0 ; i < N ; i++) {
-            arr[i] = Integer.parseInt(st.nextToken());
+            stack1.add(Integer.parseInt(st.nextToken()));
         }
 
-        Stack<Integer> stack = new Stack<>();
+        solve();
 
-        for (int i = N-1 ; i >= 0 ; i--) {
-            int num = arr[i];
+        System.out.println(sb);
+    }
 
-            if (stack.isEmpty()) {
-                nge[i] = -1;
-                stack.push(num);
+    static void solve() {
+        int idx = N-1;
+
+        while (!stack1.isEmpty()) {
+            if (stack2.isEmpty()) {
+                answer[idx--] = -1;
+                stack2.add(stack1.pop());
                 continue;
             }
 
-            if (num < stack.peek()) {
-                nge[i] = stack.peek();
-            } else {
-                while (!stack.isEmpty() && stack.peek() <= num) {
-                    // 그냥 pop() 해버리는 이유는 stack.peek() 은 어차피 num 보다 작은 수 이기 때문에 다음 arr[i] 에서도 고려하지 않아도 되는 수임
-                    stack.pop();
+
+            while (!stack1.isEmpty() && !stack2.isEmpty()) {
+                if (stack1.peek() >= stack2.peek()) {
+                    stack2.pop();
+                } else {
+                    answer[idx--] = stack2.peek();
+                    stack2.add(stack1.pop());
                 }
-
-                nge[i] = stack.isEmpty() ? -1 : stack.peek();
             }
-
-            stack.push(num); // num 이 arr[i] 의 오큰수가 될 수도 있기 때문에 넣어줘야 함
         }
 
-        StringBuilder sb = new StringBuilder();
         for (int i = 0 ; i < N ; i++) {
-            sb.append(nge[i]).append(" ");
+            sb.append(answer[i]).append(" ");
         }
-
-        System.out.println(sb);
-
     }
 }
