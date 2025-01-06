@@ -1,18 +1,18 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
 
-    static int N, M;
+    static int L, W, answer;
     static int[] dx = {0, 1, 0, -1}, dy = {-1, 0, 1, 0};
     static char[][] map;
+    static boolean[][] visited;
     static class Node {
         int x, y, cnt;
-
         public Node(int x, int y, int cnt) {
             this.x = x;
             this.y = y;
@@ -23,24 +23,22 @@ public class Main {
     public static void main(String[] args) throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(bf.readLine());
-        N = Integer.parseInt(st.nextToken());
-        M = Integer.parseInt(st.nextToken());
+        L = Integer.parseInt(st.nextToken());
+        W = Integer.parseInt(st.nextToken());
+        map = new char[L][W];
 
-        map = new char[N][M];
-
-        int answer = 0;
-
-        for (int i = 0 ; i < N ; i++) {
+        for (int i = 0 ; i < L ; i++) {
             String s = bf.readLine();
-            for (int j = 0 ; j < M ; j++) {
+            for (int j = 0 ; j < W ; j++) {
                 map[i][j] = s.charAt(j);
             }
         }
 
-        for (int i = 0 ; i < N ; i++) {
-            for (int j = 0 ; j < M ; j++) {
+        for (int i = 0 ; i < L ; i++) {
+            for (int j = 0 ; j < W ; j++) {
                 if (map[i][j] == 'L') {
-                    answer = Math.max(answer, bfs(j, i));
+                    visited = new boolean[L][W];
+                    bfs(j, i);
                 }
             }
         }
@@ -48,31 +46,28 @@ public class Main {
         System.out.println(answer);
     }
 
-    // 이동 가능한 경로중 가장 멀리 있는 위치
-    static int bfs(int x, int y) {
-        Queue<Node> Q = new LinkedList<>();
-        Q.add(new Node(x, y, 0));
-        boolean[][] visited = new boolean[N][M];
-        visited[y][x] = true;
 
-        int max = 0;
+    // 이동이 가능하고, 두 좌표간 이동거리가 최대인 경우
+    static void bfs(int x, int y) {
+        Queue<Node> Q = new LinkedList<>();
+
+        Q.add(new Node(x, y, 0));
+        visited[y][x] = true;
 
         while (!Q.isEmpty()) {
             Node now = Q.poll();
 
-            max = Math.max(max, now.cnt);
+            answer = Math.max(answer, now.cnt);
 
             for (int i = 0 ; i < 4 ; i++) {
                 int nx = now.x + dx[i];
                 int ny = now.y + dy[i];
 
-                if (nx >= 0 && nx < M && ny >= 0 && ny < N && !visited[ny][nx] && map[ny][nx] == 'L') {
+                if (nx >= 0 && nx < W && ny >= 0 && ny < L && map[ny][nx] == 'L' && !visited[ny][nx]) {
                     visited[ny][nx] = true;
                     Q.add(new Node(nx, ny, now.cnt+1));
                 }
             }
         }
-
-        return max;
     }
 }
