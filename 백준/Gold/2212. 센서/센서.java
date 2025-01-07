@@ -2,21 +2,19 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.StringTokenizer;
 
 public class Main {
 
-    static int N, K;
+    static int N, K, answer;
     static int[] arr;
-    static Integer[] diff;
 
     public static void main(String[] args) throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(bf.readLine());
         K = Integer.parseInt(bf.readLine());
+
         arr = new int[N];
-        diff = new Integer[N-1];
 
         StringTokenizer st = new StringTokenizer(bf.readLine());
 
@@ -24,24 +22,27 @@ public class Main {
             arr[i] = Integer.parseInt(st.nextToken());
         }
 
-        Arrays.sort(arr);
+        solve();
 
-        System.out.println(solve());
+        System.out.println(answer);
     }
 
-    static int solve() {
-        for (int i = 0 ; i < N-1 ; i++) {
-            diff[i] = Math.abs(arr[i+1] - arr[i]);
+    static void solve() {
+        Arrays.sort(arr);
+
+        int idx = 0;
+        Integer[] dist = new Integer[N-1];
+        for (int i = 1 ; i < N ; i++) {
+            dist[idx] = arr[i] - arr[i-1];
+            answer += dist[idx++];
         }
 
-        Arrays.sort(diff, Comparator.reverseOrder());
+        Arrays.sort(dist, Collections.reverseOrder());
 
-        int answer = 0;
+        idx = 0;
 
-        for (int i = K-1 ; i < N-1 ; i++) {
-            answer += diff[i];
+        while (idx < K-1 && idx < dist.length) {
+            answer -= dist[idx++];
         }
-
-        return answer;
     }
 }
