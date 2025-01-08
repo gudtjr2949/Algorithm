@@ -1,41 +1,33 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.Arrays;
+import java.util.StringTokenizer;
 
 public class Main {
 
     static int N;
-    static long sum, answer;
-    static List<Node> list;
+    static long total, answer;
+    static Node[] nodes;
     static class Node {
-        long idx, cnt;
-
-        public Node(long idx, long cnt) {
+        long idx, person;
+        public Node(long idx, long person) {
             this.idx = idx;
-            this.cnt = cnt;
+            this.person = person;
         }
     }
 
     public static void main(String[] args) throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(bf.readLine());
-        list = new ArrayList<>();
+
+        nodes = new Node[N];
         for (int i = 0 ; i < N ; i++) {
             StringTokenizer st = new StringTokenizer(bf.readLine());
             long idx = Long.parseLong(st.nextToken());
-            long cnt = Long.parseLong(st.nextToken());
-            list.add(new Node(idx, cnt));
-            sum += cnt;
+            long person = Long.parseLong(st.nextToken());
+            nodes[i] = new Node(idx, person);
+            total += person;
         }
-
-        sum++;
-
-        Collections.sort(list, new Comparator<Node>() {
-            @Override
-            public int compare(Node o1, Node o2) {
-                return (int) (o1.idx - o2.idx);
-            }
-        });
 
         solve();
 
@@ -43,14 +35,18 @@ public class Main {
     }
 
     static void solve() {
-        long result = 0;
+        Arrays.sort(nodes, (o1, o2) -> (int) o1.idx - (int) o2.idx);
 
-        for (Node next : list) {
-            result += next.cnt;
+        long mid = (total + 1) / 2;
 
-            if ((sum / 2) <= result) {
-                answer = next.idx;
-                break;
+        long sum = 0;
+
+        for (int i = 0 ; i < N ; i++) {
+            sum += nodes[i].person;
+
+            if (sum >= mid) {
+                answer = nodes[i].idx;
+                return;
             }
         }
     }
