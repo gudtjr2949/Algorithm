@@ -41,29 +41,15 @@ public class Main {
         int preB = arr[1];
         int preC = arr[2];
 
-        movingWater(0, 1);
-        dfs();
-        restore(preA, preB, preC);
+        for (int i = 0 ; i < 3 ; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (i == j) continue;
 
-        movingWater(0, 2);
-        dfs();
-        restore(preA, preB, preC);
-
-        movingWater(1, 0);
-        dfs();
-        restore(preA, preB, preC);
-
-        movingWater(1, 2);
-        dfs();
-        restore(preA, preB, preC);
-
-        movingWater(2, 0);
-        dfs();
-        restore(preA, preB, preC);
-
-        movingWater(2, 1);
-        dfs();
-        restore(preA, preB, preC);
+                movingWater(i, j);
+                dfs();
+                restore(preA, preB, preC);
+            }
+        }
     }
 
     static void restore(int preA, int preB, int preC) {
