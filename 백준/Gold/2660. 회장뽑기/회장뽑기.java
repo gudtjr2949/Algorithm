@@ -1,83 +1,82 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class Main {
 
-    static int N, min;
-    static int[][] dp;
-    static List<Integer> list;
-
-    public static void main(String[] args) throws Exception {
-        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-
-        N = Integer.parseInt(bf.readLine());
-
-        dp = new int[N+1][N+1];
-        list = new ArrayList<>();
-
-        StringTokenizer st = new StringTokenizer(bf.readLine());
-
-        int a = Integer.parseInt(st.nextToken());
-        int b = Integer.parseInt(st.nextToken());
-
-        for (int i = 1 ; i <= N ; i++) {
-            for (int j = 1 ; j <= N ; j++) {
-                if (i != j) {
-                    dp[i][j] = 100_000;
-                }
-            }
-        }
-
-        while (a != -1 && b != -1) {
-            dp[a][b] = 1;
-            dp[b][a] = 1;
-            st = new StringTokenizer(bf.readLine());
-            a = Integer.parseInt(st.nextToken());
-            b = Integer.parseInt(st.nextToken());
-        }
-
-        solve();
-
-        Collections.sort(list);
-
-        System.out.println(min + " " + list.size());
-        for (int i = 0 ; i < list.size() ; i++) {
-            System.out.print(list.get(i) + " ");
+    static int N, minPoint;
+    static int[] arr;
+    static List<Integer> answer;
+    static List<List<Integer>> adj;
+    static class Node {
+        int idx, cnt;
+        public Node(int idx, int cnt) {
+            this.idx = idx;
+            this.cnt = cnt;
         }
     }
 
-    // dp[i] 의 라인에서 최댓값이 가장 작은 i 값 찾기
-    static void solve() {
-        for (int k = 1 ; k <= N ; k++) {
-            for (int i = 1 ; i <= N ; i++) {
-                for (int j = 1 ; j <= N ; j++) {
-                    if (i != j) {
-                        dp[i][j] = Math.min(dp[i][j], dp[i][k] + dp[k][j]);
-                    }
+    public static void main(String[] args) throws Exception {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        N = Integer.parseInt(bf.readLine());
+        arr = new int[N+1];
+        adj = new ArrayList<>();
+        answer = new ArrayList<>();
+        for (int i = 0 ; i <= N ; i++) adj.add(new ArrayList<>());
+
+        while (true) {
+            StringTokenizer st = new StringTokenizer(bf.readLine());
+            int from = Integer.parseInt(st.nextToken());
+            int to = Integer.parseInt(st.nextToken());
+
+            if (from == -1 && to == -1) break;
+
+            adj.get(from).add(to);
+            adj.get(to).add(from);
+        }
+
+        for (int i = 1 ; i <= N ; i++) solve(i);
+
+        findAnswer();
+
+        System.out.println(minPoint + " " + answer.size());
+        for (Integer num : answer) System.out.print(num + " ");
+    }
+
+    static void findAnswer() {
+        minPoint = N+1;
+
+        for (int i = 1 ; i <= N ; i++) {
+            minPoint = Math.min(minPoint, arr[i]);
+        }
+
+        for (int i = 1 ; i <= N ; i++) {
+            if (arr[i] == minPoint) answer.add(i);
+        }
+    }
+
+    static void solve(int start) {
+        Queue<Node> Q = new LinkedList<>();
+        int[] dp = new int[N+1];
+        Arrays.fill(dp, N+1);
+        dp[start] = 0;
+        Q.add(new Node(start, 0));
+
+        while (!Q.isEmpty()) {
+            Node now = Q.poll();
+
+            for (Integer next : adj.get(now.idx)) {
+                if (dp[next] > dp[now.idx] + 1) {
+                    dp[next] = dp[now.idx] + 1;
+                    Q.add(new Node(next, now.cnt+1));
                 }
             }
         }
 
-        min = 100_000;
+        // findMax
+        int max = 0;
+        for (int i = 1 ; i <= N ; i++) max = Math.max(max, dp[i]);
 
-        for (int i = 1 ; i <= N ; i++) {
-            int tmpMax = 0;
-            for (int j = 1 ; j <= N ; j++) {
-                tmpMax = Math.max(tmpMax, dp[i][j]);
-            }
-
-            if (min > tmpMax) {
-                min = tmpMax;
-                list = new ArrayList<>();
-                list.add(i);
-            } else if (min == tmpMax) {
-                list.add(i);
-            }
-        }
-
+        arr[start] = max;
     }
 }
