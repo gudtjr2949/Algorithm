@@ -9,20 +9,8 @@ public class Main {
     static int[] alpha;
 
     public static void main(String[] args) throws Exception {
-        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(bf.readLine());
-        S = Integer.parseInt(st.nextToken());
-        P = Integer.parseInt(st.nextToken());
-        s = bf.readLine();
-        st = new StringTokenizer(bf.readLine());
-        A = Integer.parseInt(st.nextToken());
-        C = Integer.parseInt(st.nextToken());
-        G = Integer.parseInt(st.nextToken());
-        T = Integer.parseInt(st.nextToken());
-        alpha = new int[26];
-
+        input();
         solve();
-
         System.out.println(answer);
     }
 
@@ -47,4 +35,17 @@ public class Main {
         return alpha['A'-'A'] >= A && alpha['C'-'A'] >= C && alpha['G'-'A'] >= G && alpha['T'-'A'] >= T;
     }
 
+    static void input() throws Exception {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(bf.readLine());
+        S = Integer.parseInt(st.nextToken());
+        P = Integer.parseInt(st.nextToken());
+        s = bf.readLine();
+        st = new StringTokenizer(bf.readLine());
+        A = Integer.parseInt(st.nextToken());
+        C = Integer.parseInt(st.nextToken());
+        G = Integer.parseInt(st.nextToken());
+        T = Integer.parseInt(st.nextToken());
+        alpha = new int[26];
+    }
 }
