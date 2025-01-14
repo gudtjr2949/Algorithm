@@ -11,25 +11,27 @@ public class Main {
         N = Integer.parseInt(bf.readLine());
         M = Integer.parseInt(bf.readLine());
         s = bf.readLine();
+
         solve();
 
         System.out.println(answer);
     }
 
     static void solve() {
-        int cnt = 0;
 
-        for (int i = 1 ; i < M-1 ; ) {
-            if (s.charAt(i) == 'O' && s.charAt(i+1) == 'I') {
-                cnt++;
-                if (cnt == N) {
-                    if (s.charAt(i - (2*N-1)) == 'I') answer++;
-                    cnt--;
+        for (int i = 0 ; i < M ; i++) {
+            int cnt = 0;
+
+            if (s.charAt(i) == 'I') {
+                while (i+2 < M && s.charAt(i+1) == 'O' && s.charAt(i+2) == 'I') {
+                    cnt++;
+                    if (cnt == N) {
+                        cnt--;
+                        answer++;
+                    }
+
+                    i+=2;
                 }
-                i += 2;
-            } else {
-                cnt = 0;
-                i++;
             }
         }
     }
