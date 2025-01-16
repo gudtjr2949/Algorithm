@@ -6,9 +6,9 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-    static int N;
+    static int N, A, B;
     static List<List<Integer>> tree;
-    static int[] depth, parents;
+    static int[] depths, parents;
     static boolean[] visited, root;
     static StringBuilder sb = new StringBuilder();
 
@@ -19,86 +19,79 @@ public class Main {
 
         while (T-- > 0 ) {
             N = Integer.parseInt(bf.readLine());
+            init();
+            input(bf);
 
-            tree = new ArrayList<>();
-            for (int i = 0 ; i <= N ; i++) {
-                tree.add(new ArrayList<>());
-            }
+            int rootNode = findRoot();
 
-            depth = new int[N+1];
-            parents = new int[N+1];
-            visited = new boolean[N+1];
-            root = new boolean[N+1];
-
-            for (int i = 0; i < N - 1; i++) {
-                StringTokenizer st = new StringTokenizer(bf.readLine());
-
-                int a = Integer.parseInt(st.nextToken());
-                int b = Integer.parseInt(st.nextToken());
-
-                tree.get(a).add(b);
-                tree.get(b).add(a);
-                root[b] = true;
-            }
-
-            int rootNode = 0;
-
-            for (int i = 1 ; i <= N ; i++) {
-                if (!root[i]) {
-                    rootNode = i;
-                    break;
-                }
-            }
-
+            depths[rootNode] = 1;
             visited[rootNode] = true;
-            dfs(rootNode, 0);
+            findDepth(rootNode, 1);
 
-            StringTokenizer st = new StringTokenizer(bf.readLine());
-
-            int a = Integer.parseInt(st.nextToken());
-            int b = Integer.parseInt(st.nextToken());
-
-            // b가 무조건 깊이가 깊음
-            if (depth[a] > depth[b]) {
-                int tmp = a;
-                a = b;
-                b = tmp;
-            }
-
-            solve(a, b);
-
+            sb.append(solve()).append("\n");
         }
 
         System.out.println(sb);
     }
 
-    static void solve(int a, int b) {
-        int depthA = depth[a];
-        int depthB = depth[b];
-
-        if (depthA != depthB) {
-            while (depthA != depthB) {
-                b = parents[b];
-                depthB = depth[b];
-            }
+    static int solve() {
+        if (depths[A] > depths[B]) {
+            while (depths[A] != depths[B]) A = parents[A];
+        } else if (depths[A] < depths[B]) {
+            while (depths[A] != depths[B]) B = parents[B];
         }
 
-        while (a != b) {
-            a = parents[a];
-            b = parents[b];
+        while (A != B) {
+            A = parents[A];
+            B = parents[B];
         }
 
-        sb.append(a).append("\n");
+        return A;
     }
 
-    static void dfs(int idx, int floor) {
+    static void findDepth(int idx, int depth) {
         for (int next : tree.get(idx)) {
             if (!visited[next]) {
                 visited[next] = true;
-                depth[next] = floor+1;
                 parents[next] = idx;
-                dfs(next, floor+1);
+                depths[next] = depth+1;
+                findDepth(next, depth+1);
             }
         }
     }
+
+    static int findRoot() {
+        for (int i = 1 ; i <= N ; i++) {
+            if (!root[i]) {
+                return i;
+            }
+        }
+
+        return 0;
+    }
+
+    static void input(BufferedReader bf) throws Exception {
+        StringTokenizer st = null;
+        for (int i = 0 ; i < N-1 ; i++) {
+            st = new StringTokenizer(bf.readLine());
+            int from = Integer.parseInt(st.nextToken());
+            int to = Integer.parseInt(st.nextToken());
+            tree.get(from).add(to);
+            root[to] = true;
+        }
+
+        st = new StringTokenizer(bf.readLine());
+        A = Integer.parseInt(st.nextToken());
+        B = Integer.parseInt(st.nextToken());
+    }
+
+    static void init() {
+        depths = new int[N+1];
+        parents = new int[N+1];
+        visited = new boolean[N+1];
+        root = new boolean[N+1];
+        tree = new ArrayList<>();
+        for (int i = 0 ; i <= N ; i++) tree.add(new ArrayList<>());
+    }
+
 }
