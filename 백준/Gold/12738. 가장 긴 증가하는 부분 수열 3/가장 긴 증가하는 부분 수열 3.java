@@ -5,44 +5,61 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 public class Main {
+
+    static int N;
+    static int[] arr;
+    static List<Integer> list;
+
     public static void main(String[] args) throws Exception {
-        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-        int N = Integer.parseInt(bf.readLine());
+        input();
+        solve();
+        printAnswer();
+    }
 
-        int[] A = new int[N];
-        List<Integer> list = new ArrayList<>();
-
-        StringTokenizer st = new StringTokenizer(bf.readLine());
-
+    static void solve() {
         for (int i = 0 ; i < N ; i++) {
-            A[i] = Integer.parseInt(st.nextToken());
-        }
-
-        list.add(Integer.MIN_VALUE);
-
-        for (int i = 0 ; i < N ; i++) {
-            int num = A[i];
-            int left = 0;
-            int right = list.size()-1;
-
-            if (num > list.get(right)) {
-                list.add(num);
+            if (list.isEmpty() || list.get(list.size()-1) < arr[i]) {
+                list.add(arr[i]);
             } else {
-                int idx = 0;
-                while (left <= right) {
-                    int mid = (left + right) / 2;
-                    if (list.get(mid) < num) {
-                        left = mid+1;
-                    } else {
-                        idx = mid;
-                        right = mid-1;
-                    }
-                }
+                int idx = find(arr[i]);
+                list.set(idx, arr[i]);
+            }
+        }
+    }
 
-                list.set(idx, num);
+    static int find(int key) {
+        int left = 0;
+        int right = list.size()-1;
+
+        while (left < right) {
+            int mid = (left + right) / 2;
+
+            if (list.get(mid) < key) {
+                left = mid+1;
+            } else {
+                right = mid;
             }
         }
 
-        System.out.println(list.size()-1);
+        return left;
+    }
+
+    static void printAnswer() {
+        System.out.println(list.size());
+    }
+
+    static void input() throws Exception {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        N = Integer.parseInt(bf.readLine());
+        init();
+        StringTokenizer st = new StringTokenizer(bf.readLine());
+        for (int i = 0 ; i < N ; i++) {
+            arr[i] = Integer.parseInt(st.nextToken());
+        }
+    }
+
+    static void init() {
+        arr = new int[N];
+        list = new ArrayList<>();
     }
 }
