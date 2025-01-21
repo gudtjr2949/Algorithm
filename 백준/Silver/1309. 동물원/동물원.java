@@ -3,9 +3,8 @@ import java.io.InputStreamReader;
 
 public class Main {
 
-    static int N, MOD = 9901;;
-    static long answer;
-    static long[][] dp;
+    static int N, answer, MOD = 9901;;
+    static int[][] dp;
 
     public static void main(String[] args) throws Exception {
         input();
@@ -35,6 +34,6 @@ public class Main {
     }
 
     static void init() {
-        dp = new long[N+1][3];
+        dp = new int[N+1][3];
     }
 }
