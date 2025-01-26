@@ -1,87 +1,66 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.StringTokenizer;
 
 public class Main {
 
     static int L, C;
-    static char[] arr, input, alpha = {'a', 'e', 'i', 'o', 'u'};
-    static boolean[] visited;
-    static List<String> answer;
-    static Set<String> set;
+    static char[] alpha, input;
+    static List<Character> vowels = Arrays.asList('a', 'e', 'i', 'o', 'u');
 
     public static void main(String[] args) throws Exception {
-        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(bf.readLine());
-        L = Integer.parseInt(st.nextToken());
-        C = Integer.parseInt(st.nextToken());
-        arr = new char[C];
-        input = new char[L];
-        set = new HashSet<>();
-        answer = new ArrayList<>();
-        visited = new boolean[C];
+        input();
+        solve();
+    }
 
-        st = new StringTokenizer(bf.readLine());
-
-        for (int i = 0 ; i < C ; i++) {
-            arr[i] = st.nextToken().charAt(0);
-        }
-
-        Arrays.sort(arr);
-
+    static void solve() {
+        Arrays.sort(alpha);
         dfs(0, 0);
-
-        Collections.sort(answer);
-
-        StringBuilder sb = new StringBuilder();
-        for (String s : answer) {
-            sb.append(s).append("\n");
-        }
-
-        System.out.println(sb);
     }
 
     static void dfs(int idx, int cur) {
         if (idx == L) {
-            makeString();
+            check();
             return;
         }
 
         for (int i = cur ; i < C ; i++) {
-            if (!visited[i]) {
-                visited[i] = true;
-                input[idx] = arr[i];
-                dfs(idx+1, i+1);
-                visited[i] = false;
-            }
+            input[idx] = alpha[i];
+            dfs(idx+1, i+1);
         }
     }
 
-    static void makeString() {
-        int monCnt = 0;
-        int sonCnt = 0;
+    static void check() {
+        int vowelsCnt = 0;
+        int consonantCnt = 0;
 
         for (int i = 0 ; i < L ; i++) {
-            for (int j = 0 ; j < 5 ; j++) {
-                if (input[i] == alpha[j]) {
-                    monCnt++;
-                    break;
-                }
-            }
+            if (vowels.contains(input[i])) vowelsCnt++;
+            else consonantCnt++;
         }
 
-        sonCnt = L - monCnt;
+        if (vowelsCnt >= 1 && consonantCnt >= 2) print();
+    }
 
-        if (monCnt >= 1 && sonCnt >= 2) {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0 ; i < L ; i++) {
-                sb.append(input[i]);
-            }
+    static void print() {
+        for (int i = 0 ; i < L ; i++) System.out.print(input[i]);
+        System.out.println();
+    }
 
-            if (!set.contains(sb.toString())) {
-                set.add(sb.toString());
-                answer.add(sb.toString());
-            }
-        }
+    static void input() throws Exception {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(bf.readLine());
+        L = Integer.parseInt(st.nextToken());
+        C = Integer.parseInt(st.nextToken());
+        init();
+        st = new StringTokenizer(bf.readLine());
+        for (int i = 0 ; i < C ; i++) alpha[i] = st.nextToken().charAt(0);
+    }
+
+    static void init() {
+        alpha = new char[C];
+        input = new char[L];
     }
 }
