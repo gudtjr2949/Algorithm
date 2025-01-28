@@ -1,61 +1,67 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class Main {
 
-    static int N, M, max = 0;
+    static int N, M, MAX, SUM, answer;
     static int[] arr;
 
     public static void main(String[] args) throws Exception {
-        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(bf.readLine());
-        N = Integer.parseInt(st.nextToken());
-        M = Integer.parseInt(st.nextToken());
-
-        arr = new int[N];
-        for (int i = 0; i < N; i++) {
-            arr[i] = Integer.parseInt(bf.readLine());
-            max = Math.max(max, arr[i]);
-        }
-
-        System.out.println(binarySearch());
+        input();
+        solve();
+        System.out.println(answer);
     }
 
-    static int binarySearch() {
-        int left = max;
-        int right = 10_000 * 100_000;
-
-        int answer = 0;
+    static void solve() {
+        int left = MAX;
+        int right = SUM;
 
         while (left <= right) {
             int mid = (left + right) / 2;
-            int result = solve(mid);
 
-            if (result > M) {
-                left = mid + 1;
+            if (findCnt(mid) > M) {
+                left = mid+1;
             } else {
+                right = mid-1;
                 answer = mid;
-                right = mid - 1;
             }
         }
-
-        return answer;
     }
 
-    static int solve(int mid) {
+    // 인출 횟수 찾기
+    static int findCnt(int mid) {
         int cnt = 1;
-        int money = mid;
+        int now = mid; // 현재 가지고 있는 금액
 
         for (int i = 0 ; i < N ; i++) {
-            money -= arr[i];
+            now -= arr[i];
 
-            if (money < 0) {
+            // 돈이 모자라기 때문에 인출했어야 함
+            if (now < 0) {
+                now = mid - arr[i];
                 cnt++;
-                money = mid - arr[i];
             }
         }
 
         return cnt;
+    }
+
+    static void input() throws Exception {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(bf.readLine());
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+        init();
+        for (int i = 0 ; i < N ; i++) {
+            arr[i] = Integer.parseInt(bf.readLine());
+            SUM += arr[i];
+            MAX = Math.max(MAX, arr[i]);
+        }
+    }
+
+    static void init() {
+        arr = new int[N];
     }
 }
