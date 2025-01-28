@@ -1,15 +1,16 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class Main {
 
-    static long N, attackH;
-    static Room[] roomArr;
-    static class Room {
+    static int N;
+    static long ATK, answer;
+    static Node[] nodes;
+    static class Node {
         long t, a, h;
-
-        public Room(long t, long a, long h) {
+        public Node(long t, long a, long h) {
             this.t = t;
             this.a = a;
             this.h = h;
@@ -17,65 +18,76 @@ public class Main {
     }
 
     public static void main(String[] args) throws Exception {
+        input();
+        solve();
+        System.out.println(answer);
+    }
+
+    static void solve() {
+        long left = 0;
+        long right = Long.MAX_VALUE;
+
+        while (left <= right) {
+            long mid = (left + right) / 2;
+
+            if (findMaxHP(mid)) {
+                right = mid-1;
+            } else {
+                left = mid+1;
+            }
+        }
+
+        answer = left;
+    }
+
+    static boolean findMaxHP(long mid) {
+        long nowHP = mid;
+        long nowATK = ATK;
+
+        Node[] tmp = copyNode();
+
+        for (Node node : tmp) {
+
+            if (node.t == 1) {
+                if (node.h % nowATK == 0) nowHP -= (node.h / nowATK-1) * node.a;
+                else nowHP -= (node.h / nowATK) * node.a;
+
+                if (nowHP <= 0) return false;
+            } else {
+                nowHP += node.h;
+                if (nowHP > mid) nowHP = mid;
+                nowATK += node.a;
+            }
+        }
+
+        return true;
+    }
+
+    static Node[] copyNode() {
+        Node[] copied = new Node[N];
+        for (int i = 0 ; i < N ; i++) copied[i] = new Node(nodes[i].t, nodes[i].a, nodes[i].h);
+        return copied;
+    }
+
+    static void input() throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+
         StringTokenizer st = new StringTokenizer(bf.readLine());
-        N = Long.parseLong(st.nextToken());
-        attackH = Long.parseLong(st.nextToken());
+        N = Integer.parseInt(st.nextToken());
+        ATK = Long.parseLong(st.nextToken());
 
-        roomArr = new Room[(int) N];
+        init();
 
-        for (int i = 0 ; i < (int) N ; i++) {
+        for (int i = 0 ; i < N ; i++) {
             st = new StringTokenizer(bf.readLine());
             long t = Long.parseLong(st.nextToken());
             long a = Long.parseLong(st.nextToken());
             long h = Long.parseLong(st.nextToken());
-            roomArr[i] = new Room(t, a, h);
+            nodes[i] = new Node(t, a, h);
         }
-
-        System.out.println(binarySearch());
     }
 
-    static long binarySearch() {
-        long left = 0;
-        long right = Long.MAX_VALUE;
-        long answer = 0;
-
-        while (left <= right) {
-            long mid = (left + right) / 2; // 내 생명력
-
-            long result = solve(mid);
-
-            if (result < N) { // 너무 나아간 방의 갯수가 적음 -> 생명력을 더 늘려야 함
-                left = mid + 1;
-            } else {
-                answer = mid;
-                right = mid - 1;
-            }
-        }
-
-        return answer;
-    }
-
-    // 내 생명력이 mid 일 때, 나아갈 수 있는 방의 갯수
-    static long solve(long originH) {
-
-        long tmpAttackH = attackH;
-        long tmpH = originH;
-        long cnt = 0;
-
-        for (int i = 0 ; i < N ; i++) {
-            if (roomArr[i].t == 1) { // 몬스터 만남
-                long result = (roomArr[i].h / tmpAttackH);
-                tmpH -= (roomArr[i].h % tmpAttackH) == 0 ? (result - 1) * roomArr[i].a : result * roomArr[i].a;
-                if (tmpH <= 0) return cnt;
-            } else {
-                tmpH += roomArr[i].h;
-                if (tmpH >= originH) tmpH = originH;
-                tmpAttackH += roomArr[i].a;
-            }
-            cnt++;
-        }
-
-        return cnt;
+    static void init() {
+        nodes = new Node[N];
     }
 }
