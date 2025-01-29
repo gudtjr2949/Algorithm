@@ -1,54 +1,56 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class Main {
 
-    static long N, M, MAX, answer;
+    static int N;
+    static long M, answer;
     static long[] arr;
 
     public static void main(String[] args) throws Exception {
-        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(bf.readLine());
-        N = Long.parseLong(st.nextToken());
-        M = Long.parseLong(st.nextToken());
-
-        arr = new long[(int) N];
-
-        st = new StringTokenizer(bf.readLine());
-
-        for (int i = 0 ; i < N ; i++) {
-            arr[i] = Long.parseLong(st.nextToken());
-            MAX = Math.max(MAX, arr[i]);
-        }
-
+        input();
         solve();
-
         System.out.println(answer);
     }
 
     static void solve() {
-        long left = 0;
-        long right = MAX;
+        Arrays.sort(arr);
+        long left = 1;
+        long right = arr[N-1];
 
         while (left < right) {
             long mid = (left + right) / 2;
-            long cnt = cntTree(mid);
 
-            if (cnt >= M) {
-                left = mid+1;
-                answer = Math.max(answer, mid);
-            } else {
-                right = mid;
-            }
+            if (cutTree(mid) < M) right = mid; // 너무 적게 잘림 -> mid를 더 작게 만들어야 함
+            else left = mid+1;
         }
+
+        answer = left-1;
     }
 
-    static long cntTree(long mid) {
+    static long cutTree(long mid) {
         long result = 0;
-        for (int i = 0 ; i < N ; i++) {
-            result += (arr[i] - mid) > 0 ? arr[i] - mid : 0;
+
+        for (long tree : arr) {
+            result += tree - mid > 0 ? tree - mid : 0;
         }
+        
         return result;
+    }
+
+    static void input() throws Exception {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(bf.readLine());
+        N = Integer.parseInt(st.nextToken());
+        M = Long.parseLong(st.nextToken());
+        init();
+        st = new StringTokenizer(bf.readLine());
+        for (int i = 0 ; i < N ; i++) arr[i] = Long.parseLong(st.nextToken());
+    }
+
+    static void init() {
+        arr = new long[N];
     }
 }
