@@ -1,74 +1,85 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.StringTokenizer;
 
 public class Main {
 
     static int N;
-    static char[] operation = {'+', '-', ' '};
-    static List<String> list;
-    static StringBuilder sb = new StringBuilder();
+    static char[] operations;
+    static StringBuilder sb;
 
     public static void main(String[] args) throws Exception {
-        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-
-        int Test = Integer.parseInt(bf.readLine());
-
-        for (int T = 0 ; T < Test ; T++) {
-            N = Integer.parseInt(bf.readLine());
-            list = new ArrayList<>();
-            dfs(1, "1");
-            Collections.sort(list);
-
-            for (String s : list) {
-                sb.append(s).append("\n");
-            }
-
-            sb.append("\n");
-        }
-
+        sb = new StringBuilder();
+        input();
         System.out.println(sb);
     }
 
-    static void dfs(int idx, String s) {
+    static void dfs(int idx) {
         if (idx == N) {
-            String input = s.replace(" ", "");
-            if (calculation(input)) {
-                list.add(s);
-            }
+            check();
             return;
         }
 
-        dfs(idx+1, s + '+' + (idx+1));
-        dfs(idx+1, s + '-' + (idx+1));
-        dfs(idx+1, s + ' ' + (idx+1));
+        operations[idx] = ' ';
+        dfs(idx+1);
+
+        operations[idx] = '+';
+        dfs(idx+1);
+
+        operations[idx] = '-';
+        dfs(idx+1);
     }
 
-    static boolean calculation(String s) {
-        StringTokenizer st = new StringTokenizer(s, "-|+", true);
+    static void check() {
+        List<Integer> numList = new ArrayList<>();
+        List<Character> operList = new ArrayList<>();
 
-        int sum = Integer.parseInt(st.nextToken());
+        numList.add(1);
 
-        int len = st.countTokens();
-
-        while (st.hasMoreTokens()){
-            char operation = st.nextToken().charAt(0);
-            int num = Integer.parseInt(st.nextToken());
-
-            if (operation == '+') {
-                sum += num;
+        for (int i = 1 ; i < N ; i++) {
+            if (operations[i] == ' ') {
+                numList.set(numList.size()-1, numList.get(numList.size()-1) * 10 + (i+1));
             } else {
-                sum -= num;
+                numList.add(i+1);
+                operList.add(operations[i]);
             }
         }
 
-        if (sum == 0) {
-            return true;
-        } else {
-            return false;
+        int result = numList.get(0);
+
+        for (int i = 0 ; i < operList.size() ; i++) {
+            if (operList.get(i) == '+') {
+                result += numList.get(i+1);
+            } else if (operList.get(i) == '-') {
+                result -= numList.get(i+1);
+            }
         }
+
+        if (result == 0) {
+            sb.append(1);
+            for (int i = 1 ; i < N ; i++) {
+                sb.append(operations[i]).append(i+1);
+            }
+            sb.append("\n");
+        }
+    }
+
+    static void input() throws Exception {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+
+        int T = Integer.parseInt(bf.readLine());
+
+        while (T-- > 0) {
+            N = Integer.parseInt(bf.readLine());
+            init();
+            dfs(1);
+            sb.append("\n");
+        }
+
+    }
+
+    static void init() {
+        operations = new char[N];
     }
 }
