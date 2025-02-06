@@ -1,76 +1,81 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class Main {
 
-    static int N, K, answer = 0;
-    static String[] words;
-    static boolean[] visited;
+    static int N, K, answer;
+    static String[] arr;
+    static boolean[] alpha;
 
     public static void main(String[] args) throws Exception {
-        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-
-        StringTokenizer st = new StringTokenizer(bf.readLine());
-        N = Integer.parseInt(st.nextToken());
-        K = Integer.parseInt(st.nextToken());
-
-        words = new String[N];
-
-        for (int i = 0; i < N; i++) {
-            words[i] = bf.readLine();
-        }
-
-        visited = new boolean[27];
-        visited['a' - 'a'] = true;
-        visited['c' - 'a'] = true;
-        visited['i' - 'a'] = true;
-        visited['n' - 'a'] = true;
-        visited['t' - 'a'] = true;
-
-
-        if (K == 26) {
-            answer = N;
-        } else if (K >= 5) {
-            dfs(0, 0);
-        }
-
+        input();
+        solve();
         System.out.println(answer);
     }
 
-    static void dfs(int idx, int cur) {
-        if (idx == K-5) {
-            answer = Math.max(answer, solve());
+    static void solve() {
+        knowAntatica();
+
+        if (K >= 5) {
+            dfs(0, 0);
+        }
+    }
+
+    static void dfs(int cur, int cnt) {
+        if (cnt >= K-5) {
+            check();
             return;
         }
 
-        for (int i = cur; i <= 26; i++) {
-            if (!visited[i]) {
-                visited[i] = true;
-                dfs(idx + 1, i + 1);
-                visited[i] = false;
+        for (int i = cur ; i < 26 ; i++) {
+            if (!alpha[i]) {
+                alpha[i] = true;
+                dfs(i+1, cnt+1);
+                alpha[i] = false;
             }
         }
     }
 
-    static int solve() {
-        int cnt = 0;
-
-        for (int i = 0 ; i < N ; i++) {
-            String tmp = words[i];
-            boolean possible = true;
-
-            for (int j = 0 ; j < tmp.length() ; j++) {
-                if (!visited[tmp.charAt(j) - 'a']) {
-                    possible = false;
+    static void check() {
+        int know = 0;
+        for (String s : arr) {
+            boolean flag = true;
+            for (int i = 0 ; i < s.length() ; i++) {
+                if (!alpha[s.charAt(i) - 'a']) {
+                    flag = false;
                     break;
                 }
             }
 
-            if (possible) cnt++;
+            if (flag) know++;
         }
 
-        return cnt;
+        answer = Math.max(answer, know);
+    }
+
+    static void knowAntatica() {
+        alpha['a' - 'a'] = true;
+        alpha['c' - 'a'] = true;
+        alpha['i' - 'a'] = true;
+        alpha['n' - 'a'] = true;
+        alpha['t' - 'a'] = true;
+    }
+
+    static void input() throws Exception {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(bf.readLine());
+        N = Integer.parseInt(st.nextToken());
+        K = Integer.parseInt(st.nextToken());
+        init();
+        for (int i = 0 ; i < N ; i++) {
+            arr[i] = bf.readLine();
+        }
+    }
+
+    static void init() {
+        arr = new String[N];
+        alpha = new boolean[26];
+        // a, c, i, n, t는 알아야 함
     }
 }
