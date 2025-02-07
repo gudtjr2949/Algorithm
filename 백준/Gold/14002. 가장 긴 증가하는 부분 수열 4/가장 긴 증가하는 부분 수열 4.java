@@ -8,70 +8,74 @@ import java.util.StringTokenizer;
 public class Main {
 
     static int N;
-    static int[] arr, dp;
+    static int[] arr, location;
     static List<Integer> list;
-    static StringBuilder sb = new StringBuilder();
 
     public static void main(String[] args) throws Exception {
-        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-        N = Integer.parseInt(bf.readLine());
-        arr = new int[N];
-        dp = new int[N];
-
-        StringTokenizer st = new StringTokenizer(bf.readLine());
-        for (int i = 0 ; i < N ; i++) {
-            arr[i] = Integer.parseInt(st.nextToken());
-        }
-
+        input();
         solve();
-
-        System.out.println(list.size());
-        System.out.println(sb);
+        printAnswer();
     }
 
     static void solve() {
-        list = new ArrayList<>();
-
-        int idx = 0;
-
         for (int i = 0 ; i < N ; i++) {
-            if (list.size() == 0 || list.get(list.size()-1) < arr[i]) {
+            if (list.isEmpty() || list.get(list.size()-1) < arr[i]) {
                 list.add(arr[i]);
-                dp[i] = idx++;
-            } else {
-                int findIdx = findIdx(arr[i]);
-                list.set(findIdx, arr[i]);
-                dp[i] = findIdx;
+                location[i] = list.size()-1;
+                continue;
             }
+
+            int idx = bs(arr[i]);
+            location[i] = idx;
+            list.set(idx, arr[i]);
         }
-
-        idx = list.size()-1;
-        int[] result = new int[list.size()];
-
-        for (int i = N-1 ; i >= 0 ; i--) {
-            if (dp[i] == idx) {
-                result[idx--] = arr[i];
-            }
-        }
-
-        for (int i = 0 ; i < list.size() ; i++)
-            sb.append(result[i]).append(" ");
     }
 
-    static int findIdx(int target) {
+    // 이분탐색
+    static int bs(int find) {
         int left = 0;
         int right = list.size()-1;
 
         while (left < right) {
             int mid = (left + right) / 2;
 
-            if (list.get(mid) < target) {
+            if (list.get(mid) < find) {
                 left = mid+1;
             } else {
                 right = mid;
             }
         }
 
-        return right;
+        return left;
+    }
+
+    static void printAnswer() {
+        System.out.println(list.size());
+        int idx = list.size()-1;
+        int[] answer = new int[list.size()];
+        for (int i = N-1 ; i >= 0 ; i--) {
+            if (location[i] == idx) {
+                answer[idx] = arr[i];
+                idx--;
+            }
+        }
+
+        for (int num : answer) System.out.print(num + " ");
+    }
+
+    static void input() throws Exception {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        N = Integer.parseInt(bf.readLine());
+        init();
+        StringTokenizer st = new StringTokenizer(bf.readLine());
+        for (int i = 0 ; i < N ; i++) {
+            arr[i] = Integer.parseInt(st.nextToken());
+        }
+    }
+
+    static void init() {
+        arr = new int[N];
+        location = new int[N];
+        list = new ArrayList<>();
     }
 }
