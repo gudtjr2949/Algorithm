@@ -40,7 +40,6 @@ public class Main {
     static void init() {
         coins = new int[N+1];
         dp = new int[K+1][N+1];
-        for (int i = 0 ; i <= K ; i++) Arrays.fill(dp[i], MAX);
-        for (int i = 1 ; i <= N ; i++) dp[0][i] = 0;
+        for (int i = 1 ; i <= K ; i++) Arrays.fill(dp[i], MAX);
     }
 }
