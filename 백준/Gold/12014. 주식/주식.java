@@ -1,52 +1,77 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 public class Main {
+
+    static int N, K;
+    static int[] arr;
+    static List<Integer> list;
+    static StringBuilder sb = new StringBuilder();
+
     public static void main(String[] args) throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-        StringBuilder sb = new StringBuilder();
-
-        int Test = Integer.parseInt(bf.readLine());
-
-        for (int T = 1; T <= Test ; T++) {
-            StringTokenizer st = new StringTokenizer(bf.readLine());
-            int N = Integer.parseInt(st.nextToken());
-            int K = Integer.parseInt(st.nextToken());
-            int[] arr = new int[N];
-            int[] dp = new int[N];
-
-            st = new StringTokenizer(bf.readLine());
-            for (int i = 0 ; i < N ; i++) {
-                arr[i] = Integer.parseInt(st.nextToken());
-            }
-
-            Arrays.fill(dp, Integer.MIN_VALUE);
-
-            dp[0] = 1;
-
-            boolean possible = false;
-
-            for (int i = 1 ; i < N ; i++) {
-                dp[i] = 1;
-                for (int j = 0 ; j < i ; j++) {
-                    if (arr[i] > arr[j]) {
-                        dp[i] = Math.max(dp[i], dp[j]+1);
-                    }
-                }
-            }
-
-            for (int i = 0 ; i < N ; i++) {
-                if (dp[i] >= K) {
-                    possible = true;
-                    break;
-                }
-            }
-
-            sb.append("Case #").append(T).append("\n");
-            sb.append(possible ? 1 : 0).append("\n");
+        int T = Integer.parseInt(bf.readLine());
+        int idx = 0;
+        while (idx++ < T) {
+            input(bf);
+            solve();
+            findAnswer(idx);
         }
         System.out.println(sb);
+    }
+
+    static void solve() {
+        for (int i = 0 ; i < N ; i++) {
+            if (list.isEmpty() || list.get(list.size()-1) < arr[i]) {
+                list.add(arr[i]);
+                continue;
+            }
+
+            int idx = bs(arr[i]);
+            list.set(idx, arr[i]);
+        }
+    }
+
+    static int bs(int find) {
+        int left = 0;
+        int right = list.size()-1;
+
+        while (left < right) {
+            int mid = (left + right) / 2;
+
+            if (list.get(mid) < find) left = mid+1;
+            else right = mid;
+        }
+
+        return left;
+    }
+
+
+    static void findAnswer(int idx) {
+        sb.append("Case #").append(idx).append("\n");
+        if (list.size() >= K) {
+            sb.append(1).append("\n");
+        } else {
+            sb.append(0).append("\n");
+        }
+    }
+
+    static void input(BufferedReader bf) throws Exception {
+        StringTokenizer st = new StringTokenizer(bf.readLine());
+        N = Integer.parseInt(st.nextToken());
+        K = Integer.parseInt(st.nextToken());
+        init();
+        st = new StringTokenizer(bf.readLine());
+        for (int i = 0 ; i < N ; i++) {
+            arr[i] = Integer.parseInt(st.nextToken());
+        }
+    }
+
+    static void init() {
+        arr = new int[N];
+        list = new ArrayList<>();
     }
 }
