@@ -8,72 +8,89 @@ import java.util.StringTokenizer;
 public class Main {
 
     static int N, M;
-    static int[] parents, depths;
+    static int[] depth, parents;
     static boolean[] visited;
-    static List<List<Integer>> tree;
+    static int[][] operations;
+    static List<List<Integer>> adj;
+    static StringBuilder sb = new StringBuilder();
 
     public static void main(String[] args) throws Exception {
-        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-        StringBuilder sb = new StringBuilder();
-        N = Integer.parseInt(bf.readLine());
-        init();
-        StringTokenizer st = null;
-        for (int i = 0 ; i < N-1 ; i++) {
-            st = new StringTokenizer(bf.readLine());
-            int from = Integer.parseInt(st.nextToken());
-            int to = Integer.parseInt(st.nextToken());
-            tree.get(from).add(to);
-            tree.get(to).add(from);
-        }
-
-        depths[1] = 1;
-        visited[1] = true;
-        findDepth(1, 1);
-        
-        M = Integer.parseInt(bf.readLine());
-        for (int i = 0 ; i < M ; i++) {
-            st = new StringTokenizer(bf.readLine());
-            int A = Integer.parseInt(st.nextToken());
-            int B = Integer.parseInt(st.nextToken());
-            sb.append(solve(A, B)).append("\n");
-        }
-
+        input();
+        solve();
         System.out.println(sb);
     }
 
-    static int solve(int A, int B) {
-        if (depths[A] > depths[B]) {
-            while (depths[A] != depths[B]) A = parents[A];
-        } else if (depths[A] < depths[B]) {
-            while (depths[A] != depths[B]) B = parents[B];
+    static void solve() {
+        visited[1] = true;
+        setDepth(1);
+
+        for (int[] operation : operations) {
+            int a = operation[0];
+            int b = operation[1];
+
+            if (depth[a] > depth[b]) {
+                while (depth[a] != depth[b]) {
+                    a = parents[a];
+                }
+            } else if (depth[a] < depth[b]) {
+                while (depth[a] != depth[b]) {
+                    b = parents[b];
+                }
+            }
+
+
+            while (a != b) {
+                a = parents[a];
+                b = parents[b];
+            }
+
+            sb.append(a).append("\n");
         }
-
-
-        while (A != B) {
-            A = parents[A];
-            B = parents[B];
-        }
-
-        return A;
     }
 
-
-    static void findDepth(int idx, int depth) {
-        for (int next : tree.get(idx)) {
+    static void setDepth(int idx) {
+        for (int next : adj.get(idx)) {
             if (!visited[next]) {
                 visited[next] = true;
-                depths[next] = depth+1;
+                depth[next] = depth[idx]+1;
                 parents[next] = idx;
-                findDepth(next, depth+1);
+                setDepth(next);
             }
         }
     }
 
-    static void init() {
+    static void input() throws Exception {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+
+        N = Integer.parseInt(bf.readLine());
+        init1();
+        for (int i = 0 ; i < N-1 ; i++) {
+            StringTokenizer st = new StringTokenizer(bf.readLine());
+            int a = Integer.parseInt(st.nextToken());
+            int b = Integer.parseInt(st.nextToken());
+            adj.get(a).add(b);
+            adj.get(b).add(a);
+        }
+        M = Integer.parseInt(bf.readLine());
+        init2();
+        for (int i = 0 ; i < M ; i++) {
+            StringTokenizer st = new StringTokenizer(bf.readLine());
+            int a = Integer.parseInt(st.nextToken());
+            int b = Integer.parseInt(st.nextToken());
+            operations[i][0] = a;
+            operations[i][1] = b;
+        }
+    }
+
+    static void init1() {
+        depth = new int[N+1];
         parents = new int[N+1];
-        depths = new int[N+1];
         visited = new boolean[N+1];
-        tree = new ArrayList<>();
-        for (int i = 0 ; i <= N ; i++) tree.add(new ArrayList<>());
+        adj = new ArrayList<>();
+        for (int i = 0 ; i <= N ; i++) adj.add(new ArrayList<>());
+    }
+
+    static void init2() {
+        operations = new int[M][2];
     }
 }
