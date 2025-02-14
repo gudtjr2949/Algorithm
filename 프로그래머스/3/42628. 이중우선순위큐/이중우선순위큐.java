@@ -1,43 +1,47 @@
 import java.util.*;
 
 class Solution {
+    
+    static int[] answer;
+    static Queue<Integer> min, max;
+    
     public int[] solution(String[] operations) {
-        int[] answer = new int[2];
-        
-        PriorityQueue<Integer> min = new PriorityQueue<>((i1, i2) -> i1 - i2); // 최소 힙
-        PriorityQueue<Integer> max = new PriorityQueue<>((i1, i2) -> i2 - i1); // 최대 힙
-        
-        int length = 0;
-        boolean possible = true;
-        
-        for (String oper : operations) {
-            int num = Integer.parseInt(oper.split(" ")[1]);
+        init();
+        solve(operations);
+        return answer;
+    }
+    
+    static void solve(String[] operations) {
+        for (String s : operations) {
+            String[] tmp = s.split(" ");
+            char operation = tmp[0].charAt(0);
+            int num = Integer.parseInt(tmp[1]);
             
-            if (oper.charAt(0) == 'I') {
+            if (operation == 'I') {
                 max.add(num);
                 min.add(num);
             } else {
-                // 둘 다 비어있는 경우, 연산 무시
-                if (max.isEmpty() && min.isEmpty()) continue;
+                if (max.isEmpty() || min.isEmpty()) continue;
                 
                 if (num == -1) {
-                    int del = min.poll();
-                    max.remove(del);
+                    int removed = min.poll();
+                    max.remove(removed);
                 } else {
-                    int del = max.poll();
-                    min.remove(del);
+                    int removed = max.poll();
+                    min.remove(removed);
                 }
             }
         }
         
-        if (max.isEmpty()) {
-            answer[0] = 0;
-            answer[1] = 0;
-        } else {
-            answer[0] = max.poll();
-            answer[1] = min.poll();
+        if (!max.isEmpty() && !min.isEmpty()) {
+            answer[0] = max.peek();
+            answer[1] = min.peek();
         }
-        
-        return answer;
+    }
+    
+    static void init() {
+        answer = new int[2];
+        min = new PriorityQueue<>();
+        max = new PriorityQueue<>(Collections.reverseOrder());
     }
 }
