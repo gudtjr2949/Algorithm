@@ -1,44 +1,42 @@
 class Solution {
+    
+    static int answer;
+    
     public int solution(int n, int[] stations, int w) {
-        int answer = 0;
-        int spreadSize = 2 * w + 1;
+        solve(n, stations, w);
+        return answer;
+    }
+    
+    static void solve(int n, int[] stations, int w) {
+        int spread = (w*2)+1;
         
         int start = 1;
         
         for (int i = 0 ; i < stations.length ; i++) {
-            int end = stations[i] - w - 1;
+            int end = stations[i] - w;
             
-            if (start <= end) {
-                int len = end - start + 1;
-                
-                if (len <= spreadSize) {
-                    answer++;
+            if (start < end) {
+                int cnt = end - start;
+
+                if (cnt % spread == 0) {
+                    answer += cnt / spread;
                 } else {
-                    answer += len / spreadSize;
-                    
-                    if (len % spreadSize != 0) {
-                        answer++;
-                    }
+                    answer += (cnt / spread) + 1;
                 }
             }
             
             start = stations[i] + w + 1;
         }
         
-        // 마지막으로 설치한 기지국의 전파가 마지막 아파트까지 도달하는지 체크
         if (start <= n) {
-            int len = n - start;
-            if (len <= spreadSize) {
-                answer++;
+            int cnt = (n - start) + 1;
+                            
+            if (cnt % spread == 0) {
+                answer += cnt / spread;
             } else {
-                answer += len / spreadSize;
-                    
-                if (len % spreadSize != 0) {
-                    answer++;
-                }
+                answer += (cnt / spread) + 1;
             }
         }
         
-        return answer;
     }
 }
