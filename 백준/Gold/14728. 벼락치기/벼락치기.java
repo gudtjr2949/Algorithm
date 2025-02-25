@@ -1,50 +1,50 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class Main {
 
     static int N, T;
-    static int[][] dp;
-    static Chapter[] chapters;
-    static class Chapter {
-        int time, score;
-
-        public Chapter(int time, int score) {
-            this.time = time;
-            this.score = score;
-        }
-    }
+    static int[][] arr, dp;
 
     public static void main(String[] args) throws Exception {
-        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(bf.readLine());
-        N = Integer.parseInt(st.nextToken());
-        T = Integer.parseInt(st.nextToken());
-        chapters = new Chapter[N+1];
-
-        for (int i = 1 ; i <= N ; i++) {
-            st = new StringTokenizer(bf.readLine());
-            int time = Integer.parseInt(st.nextToken());
-            int score = Integer.parseInt(st.nextToken());
-            chapters[i] = new Chapter(time, score);
-        }
-
-        dp = new int[N+1][T+1];
-
+        input();
         solve();
-
         System.out.println(dp[N][T]);
     }
 
     static void solve() {
-        for (int i = 1 ; i <= N ; i++) {
-            for (int j = 1 ; j <= T ; j++) {
-                dp[i][j] = dp[i-1][j];
+        Arrays.sort(arr, (o1, o2) -> o1[0] - o2[0]);
 
-                if (j - chapters[i].time >= 0)
-                    dp[i][j] = Math.max(dp[i][j], dp[i-1][j - chapters[i].time] + chapters[i].score);
+        for (int i = 1 ; i <= N ; i++) {
+            for (int j = 1 ; j <= T  ; j++) {
+                if (arr[i][0] <= j) {
+                    dp[i][j] = Math.max(dp[i-1][j-arr[i][0]] + arr[i][1], dp[i-1][j]);
+                } else {
+                    dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1]);
+                }
             }
         }
+    }
+
+    static void input() throws Exception {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(bf.readLine());
+        N = Integer.parseInt(st.nextToken());
+        T = Integer.parseInt(st.nextToken());
+        init();
+        for (int i = 0 ; i < N ; i++) {
+            st = new StringTokenizer(bf.readLine());
+            int K = Integer.parseInt(st.nextToken());
+            int S = Integer.parseInt(st.nextToken());
+            arr[i][0] = K;
+            arr[i][1] = S;
+        }
+    }
+
+    static void init() {
+        dp = new int[N+1][T+1];
+        arr = new int[N+1][2];
     }
 }
