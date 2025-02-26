@@ -1,31 +1,44 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
+
+    static int answer;
+    static String s;
+    static List<Integer> list;
+
     public static void main(String[] args) throws Exception {
-        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-        String s = bf.readLine();
+        input();
+        solve();
+        System.out.println(answer);
+    }
 
-        int answer = Integer.MAX_VALUE;
-
-        String[] arr = s.split("-"); // 더하기끼리 모으기
-
-        for (int i = 0 ; i < arr.length ; i++) {
-            String[] tmpArr = arr[i].split("\\+");
-
+    static void solve() {
+        String[] arr1 = s.split("-");
+        for (String s1 : arr1) {
+            String[] arr2 = s1.split("\\+");
             int sum = 0;
-
-            for (int j = 0 ; j < tmpArr.length ; j++) {
-                sum += Integer.parseInt(tmpArr[j]);
+            for (String s2 : arr2) {
+                sum += Integer.parseInt(s2);
             }
-
-            if (answer == Integer.MAX_VALUE) {
-                answer = sum;
-            } else {
-                answer -= sum;
-            }
+            list.add(sum);
         }
 
-        System.out.println(answer);
+        answer = list.get(0);
+        for (int i = 1 ; i < list.size() ; i++) {
+            answer -= list.get(i);
+        }
+    }
+
+    static void input() throws Exception {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        s = bf.readLine();
+        init();
+    }
+
+    static void init() {
+        list = new ArrayList<>();
     }
 }
