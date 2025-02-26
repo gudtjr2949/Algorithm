@@ -14,20 +14,17 @@ public class Main {
     }
 
     static void solve() {
-        Queue<Integer> Q = new LinkedList<>();
-
         Arrays.sort(arr, (o1 ,o2) -> {
             if (o1[1] == o2[1]) return o1[0] - o2[0];
             return o1[1] - o2[1];
         });
 
-        Q.add(arr[0][1]);
+        int preEnd = arr[0][1];
         answer = 1;
 
         for (int i = 1 ; i < N ; i++) {
-            if (Q.peek() <= arr[i][0]) {
-                Q.poll();
-                Q.add(arr[i][1]);
+            if (preEnd <= arr[i][0]) {
+                preEnd = arr[i][1];
                 answer++;
             }
         }
