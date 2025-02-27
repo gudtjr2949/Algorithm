@@ -1,75 +1,80 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.StringTokenizer;
 
 public class Main {
 
-    static int N, answer = Integer.MAX_VALUE;
-    static int[][] S;
+    static int N, answer;
     static boolean[] visited;
+    static int[][] S;
 
     public static void main(String[] args) throws Exception {
-        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-
-        N = Integer.parseInt(bf.readLine());
-
-        S = new int[N+1][N+1];
-        visited = new boolean[N+1];
-
-        for (int i = 1 ; i <= N ; i++) {
-            StringTokenizer st = new StringTokenizer(bf.readLine());
-            for (int j = 1 ; j <= N ; j++) {
-                S[i][j] = Integer.parseInt(st.nextToken());
-            }
-        }
-
-        dfs(1, 0);
-
+        input();
+        solve();
         System.out.println(answer);
     }
 
-    static void dfs(int start, int idx) {
+    static void solve() {
+        dfs(0, 0);
+    }
+
+    static void dfs(int idx, int cur) {
         if (idx == N/2) {
-            findAnswer();
+            calculateOveralls();
             return;
         }
 
-        for (int i = start ; i <= N ; i++) {
+        for (int i = cur ; i < N ; i++) {
             if (!visited[i]) {
                 visited[i] = true;
-                dfs(i+1, idx+1);
+                dfs(idx+1, i+1);
                 visited[i] = false;
             }
         }
     }
 
-    static void findAnswer() {
-        List<Integer> startTeam = new ArrayList<>();
-        List<Integer> linkTeam = new ArrayList<>();
+    static void calculateOveralls() {
+        int aTeam = 0;
+        int bTeam = 0;
 
-        for (int i = 1 ; i <= N ; i++) {
-            if (visited[i]) startTeam.add(i);
-            else linkTeam.add(i);
-        }
+        for (int i = 0 ; i < N ; i++) {
+            for (int j = 0 ; j < N ; j++) {
+                if (i == j) continue;
 
-        int startSum = 0;
-        int linkSum = 0;
-
-        for (int i = 0 ; i < N/2 - 1 ; i++) {
-            int playerStart1 = startTeam.get(i);
-            int playerLink1 = linkTeam.get(i);
-            for (int j = i+1 ; j < N/2 ; j++) {
-                int playerStart2 = startTeam.get(j);
-                int playerLink2 = linkTeam.get(j);
-
-                startSum += S[playerStart1][playerStart2] + S[playerStart2][playerStart1];
-                linkSum += S[playerLink1][playerLink2] + S[playerLink2][playerLink1];
+                if (visited[i] && visited[j]) {
+                    aTeam += S[i][j];
+                }
             }
         }
 
-        answer = Math.min(answer, Math.abs(startSum - linkSum));
+        for (int i = 0 ; i < N ; i++) {
+            for (int j = 0 ; j < N ; j++) {
+                if (i == j) continue;
+
+                if (!visited[i] && !visited[j]) {
+                    bTeam += S[i][j];
+                }
+            }
+        }
+
+        answer = Math.min(answer, Math.abs(aTeam - bTeam));
     }
 
+    static void input() throws Exception {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        N = Integer.parseInt(bf.readLine());
+        init();
+        for (int i = 0 ; i < N ; i++) {
+            StringTokenizer st = new StringTokenizer(bf.readLine());
+            for (int j = 0 ; j < N ; j++) {
+                S[i][j] = Integer.parseInt(st.nextToken());
+            }
+        }
+    }
+
+    static void init() {
+        visited = new boolean[N];
+        S = new int[N][N];
+        answer = 10_001;
+    }
 }
