@@ -1,66 +1,67 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
 public class Main {
-
     static int N;
-    static int[] arr, location;
-    static List<Integer> list;
+    static int[] arr, locations;
+    static List<Integer> list, answer;
+    static StringBuilder sb = new StringBuilder();
 
     public static void main(String[] args) throws Exception {
         input();
         solve();
-        printAnswer();
+        findAnswer();
+        System.out.println(answer.size());
+        System.out.println(sb);
+    }
+
+    static void findAnswer() {
+        int idx = list.size()-1;
+
+        for (int i = N-1 ; i >= 0 ; i--) {
+            if (locations[i] == idx) {
+                answer.add(arr[i]);
+                idx--;
+            }
+        }
+
+        for (int i = answer.size()-1 ; i >= 0 ; i--) {
+            sb.append(answer.get(i)).append(" ");
+        }
     }
 
     static void solve() {
         for (int i = 0 ; i < N ; i++) {
             if (list.isEmpty() || list.get(list.size()-1) < arr[i]) {
                 list.add(arr[i]);
-                location[i] = list.size()-1;
+                locations[i] = list.size()-1;
                 continue;
             }
 
             int idx = bs(arr[i]);
-            location[i] = idx;
+            locations[i] = idx;
             list.set(idx, arr[i]);
         }
     }
 
-    // 이분탐색
-    static int bs(int find) {
+    static int bs(int num) {
         int left = 0;
         int right = list.size()-1;
 
         while (left < right) {
             int mid = (left + right) / 2;
 
-            if (list.get(mid) < find) {
-                left = mid+1;
-            } else {
+            if (list.get(mid) >= num) {
                 right = mid;
+            } else {
+                left = mid+1;
             }
         }
 
         return left;
-    }
-
-    static void printAnswer() {
-        System.out.println(list.size());
-        int idx = list.size()-1;
-        int[] answer = new int[list.size()];
-        for (int i = N-1 ; i >= 0 ; i--) {
-            if (location[i] == idx) {
-                answer[idx] = arr[i];
-                idx--;
-            }
-        }
-
-        for (int num : answer) System.out.print(num + " ");
     }
 
     static void input() throws Exception {
@@ -75,7 +76,8 @@ public class Main {
 
     static void init() {
         arr = new int[N];
-        location = new int[N];
+        locations = new int[N];
         list = new ArrayList<>();
+        answer = new ArrayList<>();
     }
 }
