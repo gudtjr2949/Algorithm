@@ -7,59 +7,63 @@ import java.util.StringTokenizer;
 public class Main {
 
     static int N;
-    static int[] P;
+    static int[] arr;
+    static List<Integer> list;
+    static StringBuilder sb = new StringBuilder();
 
     public static void main(String[] args) throws Exception {
-        StringBuilder sb = new StringBuilder();
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        String input = null;
 
-        try (BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));) {
-            String s = null;
+        while((input = bf.readLine()) != null) {
+            N = Integer.parseInt(input.trim());
+            init();
+            input(bf);
+            solve();
+        }
 
-            while ((s = bf.readLine()) != null) {
-                N = Integer.parseInt(s.trim());
-                P = new int[N];
+        System.out.println(sb);
+    }
 
-                StringTokenizer st = new StringTokenizer(bf.readLine());
-
-                for (int i = 0; i < N; i++) {
-                    P[i] = Integer.parseInt(st.nextToken());
-                }
-
-                sb.append(solve()).append("\n");
-            }
-        } catch (Exception e) {
-
-        } finally {
-            System.out.println(sb);
+    static void input(BufferedReader bf) throws Exception {
+        StringTokenizer st = new StringTokenizer(bf.readLine());
+        for (int i = 0 ; i < N ; i++) {
+            arr[i] = Integer.parseInt(st.nextToken());
         }
     }
 
-    static int solve() {
-        List<Integer> dp = new ArrayList<>();
-        dp.add(Integer.MIN_VALUE);
+    static void solve() {
+        for (int i = 0 ; i < N ; i++) {
+            if (list.isEmpty() || list.get(list.size()-1) < arr[i]) {
+                list.add(arr[i]);
+            }
 
-        for (int i = 0; i < N; i++) {
-            int num = P[i];
-            int left = 0;
-            int right = dp.size() - 1;
+            int idx = bs(arr[i]);
+            list.set(idx, arr[i]);
+        }
 
-            if (num > dp.get(right)) {
-                dp.add(num);
+        sb.append(list.size()).append("\n");
+    }
+
+    static int bs(int find) {
+        int left = 0;
+        int right = list.size()-1;
+
+        while (left < right) {
+            int mid = (left + right) / 2;
+
+            if (list.get(mid) < find) {
+                left = mid+1;
             } else {
-                int idx = 0;
-                while (left <= right) {
-                    int mid = (left + right) / 2;
-
-                    if (dp.get(mid) < num) {
-                        left = mid + 1;
-                    } else {
-                        idx = mid;
-                        right = mid - 1;
-                    }
-                }
-                dp.set(idx, num);
+                right = mid;
             }
         }
-        return dp.size() - 1;
+
+        return left;
+    }
+
+    static void init() {
+        arr = new int[N];
+        list = new ArrayList<>();
     }
 }
