@@ -4,39 +4,40 @@ import java.io.InputStreamReader;
 public class Main {
 
     static String s;
+    static int result;
 
     public static void main(String[] args) throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
         StringBuilder sb = new StringBuilder();
 
-        int N = Integer.parseInt(bf.readLine());
+        int T = Integer.parseInt(bf.readLine());
 
-        for (int i = 0 ; i < N ; i++) {
+        while (T-- > 0) {
             s = bf.readLine();
-            sb.append(solve(0, s.length()-1, false)).append("\n");
+            result = 2;
+
+            dfs(0, s.length()-1, false);
+
+            sb.append(result).append("\n");
         }
 
         System.out.println(sb);
     }
 
-    static int solve(int left, int right, boolean use) {
-        while (left < right) {
-            if (s.charAt(left) == s.charAt(right)) {
-                left++;
-                right--;
-            } else {
-                if (!use) {
-                    if (solve(left, right-1, true) == 0 || solve(left+1, right, true) == 0) {
-                        return 1;
-                    } else {
-                        return 2;
-                    }
-                } else {
-                    return 2;
-                }
-            }
+    static void dfs(int left, int right, boolean deleted) {
+        if (left >= right) {
+            if (!deleted) result = 0;
+            else result = 1;
+            return;
         }
 
-        return 0;
+        if (s.charAt(left) == s.charAt(right)) {
+            dfs(left+1, right-1, deleted);
+        } else {
+            if (!deleted) {
+                dfs(left+1, right, true);
+                dfs(left, right-1, true);
+            }
+        }
     }
 }
