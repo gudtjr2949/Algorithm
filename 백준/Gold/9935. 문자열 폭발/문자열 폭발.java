@@ -4,45 +4,62 @@ import java.util.Stack;
 
 public class Main {
 
-    static String s, boom;
-    static StringBuilder sb;
+    static String s, bomb;
+    static StringBuilder sb = new StringBuilder();
+    static Stack<Character> stack;
 
     public static void main(String[] args) throws Exception {
-        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-        s = bf.readLine();
-        boom = bf.readLine();
-        sb = new StringBuilder();
-
+        input();
         solve();
-
-        if (sb.length() == 0) System.out.println("FRULA");
-        else System.out.println(sb.reverse());
+        setAnswer();
+        System.out.println(sb);
     }
 
     static void solve() {
-        Stack<Character> stack = new Stack<>();
-
         for (int i = 0 ; i < s.length() ; i++) {
             stack.add(s.charAt(i));
 
-            if (stack.size() >= boom.length()) {
-                boolean flag = true;
-                for (int j = 0 ; j < boom.length() ; j++) {
-                    if (stack.get(stack.size() - boom.length() + j) != boom.charAt(j)) {
-                        flag = false;
-                        break;
-                    }
-                }
-
-                if (flag) {
-                    for (int j = 0 ; j < boom.length() ; j++) stack.pop();
+            if (stack.size() >= bomb.length() && check()) {
+                for (int j = 0 ; j < bomb.length() ; j++) {
+                    stack.pop();
                 }
             }
         }
+    }
 
+    static boolean check() {
+        int size = stack.size() - bomb.length();
+
+        for (int i = 0 ; i < bomb.length() ; i++) {
+            if (bomb.charAt(i) != stack.get(size++)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    static void setAnswer() {
+        if (stack.isEmpty()) {
+            sb.append("FRULA");
+            return;
+        }
 
         while (!stack.isEmpty()) {
             sb.append(stack.pop());
         }
+
+        sb = sb.reverse();
+    }
+
+    static void input() throws Exception {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        s = bf.readLine();
+        bomb = bf.readLine();
+        init();
+    }
+
+    static void init() {
+        stack = new Stack<>();
     }
 }
