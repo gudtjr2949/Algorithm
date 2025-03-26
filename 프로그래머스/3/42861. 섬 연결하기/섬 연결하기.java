@@ -2,20 +2,20 @@ import java.util.*;
 
 class Solution {
     
-    static int answer;
+    static int N, answer;
     static int[] parents;
+    static int[][] bridges;
     
     public int solution(int n, int[][] costs) {
-        init(n);
-        set(n);
-        solve(costs);
+        init(n, costs);
+        solve();
         return answer;
     }
     
-    static void solve(int[][] costs) {
-        Arrays.sort(costs, (o1, o2) -> o1[2] - o2[2]);
+    static void solve() {
+        Arrays.sort(bridges, (o1, o2) -> o1[2] - o2[2]); // 건설 비용 오름차순 정렬
         
-        for (int[] bridge : costs) {
+        for (int[] bridge : bridges) {
             int a = bridge[0];
             int b = bridge[1];
             int cost = bridge[2];
@@ -28,8 +28,8 @@ class Solution {
     }
     
     static int find(int num) {
-        if (parents[num] == num) return num;
-        return parents[num] = find(parents[num]);
+        if (num != parents[num]) return parents[num] = find(parents[num]);
+        return num;
     }
     
     static void union(int a, int b) {
@@ -39,11 +39,19 @@ class Solution {
         if (a != b) parents[b] = a;
     }
     
-    static void set(int n) {
-        for (int i = 0 ; i < n ; i++) parents[i] = i;
-    }
-    
-    static void init(int n) {
-        parents = new int[n];
+    static void init(int n, int[][] costs) {
+        N = n;
+        
+        parents = new int[N];
+        for (int i = 0 ; i < N ; i++) {
+            parents[i] = i;
+        }
+        
+        bridges = new int[costs.length][3];
+        for (int i = 0 ; i < costs.length ; i++) {
+            bridges[i][0] = costs[i][0];
+            bridges[i][1] = costs[i][1];
+            bridges[i][2] = costs[i][2];
+        }
     }
 }
