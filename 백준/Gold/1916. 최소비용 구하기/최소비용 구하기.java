@@ -4,11 +4,12 @@ import java.util.*;
 
 public class Main {
 
-    static int N, start, end, answer;
-    static int[] dist;
+    static int N, M, start, end;
+    static int[] dp;
     static List<List<Node>> adj;
     static class Node {
         int idx, cost;
+
         public Node(int idx, int cost) {
             this.idx = idx;
             this.cost = cost;
@@ -16,13 +17,39 @@ public class Main {
     }
 
     public static void main(String[] args) throws Exception {
+        input();
+        solve();
+        System.out.println(dp[end]);
+    }
+
+    static void solve() {
+        Queue<Node> PQ = new PriorityQueue<>((o1, o2) -> o1.cost - o2.cost);
+        PQ.add(new Node(start, 0));
+        boolean[] visited = new boolean[N+1];
+
+        dp[start] = 0;
+
+        while (!PQ.isEmpty()) {
+            Node now = PQ.poll();
+
+            if (!visited[now.idx]) {
+                visited[now.idx] = true;
+
+                for (Node next : adj.get(now.idx)) {
+                    if (!visited[next.idx] && dp[next.idx] > dp[now.idx] + next.cost) {
+                        dp[next.idx] = dp[now.idx] + next.cost;
+                        PQ.add(new Node(next.idx, dp[next.idx]));
+                    }
+                }
+            }
+        }
+    }
+
+    static void input() throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(bf.readLine());
-        dist = new int[N+1];
-        adj = new ArrayList<>();
-        for (int i = 0 ; i <= N ; i++) adj.add(new ArrayList<>());
-
-        int M = Integer.parseInt(bf.readLine());
+        M = Integer.parseInt(bf.readLine());
+        init();
         for (int i = 0 ; i < M ; i++) {
             StringTokenizer st = new StringTokenizer(bf.readLine());
             int from = Integer.parseInt(st.nextToken());
@@ -34,38 +61,14 @@ public class Main {
         StringTokenizer st = new StringTokenizer(bf.readLine());
         start = Integer.parseInt(st.nextToken());
         end = Integer.parseInt(st.nextToken());
-
-        Arrays.fill(dist, Integer.MAX_VALUE);
-
-        solve();
-
-        System.out.println(answer);
     }
 
-    static void solve() {
-        PriorityQueue<Node> PQ = new PriorityQueue<>(new Comparator<Node>() {
-            @Override
-            public int compare(Node o1, Node o2) {
-                return o1.cost - o2.cost;
-            }
-        });
-        PQ.add(new Node(start, 0));
-        dist[start] = 0;
-
-        while (!PQ.isEmpty()) {
-            Node now = PQ.poll();
-
-            if (now.idx == end) {
-                answer = now.cost;
-                return;
-            }
-
-            for (Node next : adj.get(now.idx)) {
-                if (dist[next.idx] > dist[now.idx] + next.cost) {
-                    dist[next.idx] = dist[now.idx] + next.cost;
-                    PQ.add(new Node(next.idx, dist[next.idx]));
-                }
-            }
+    static void init() {
+        dp = new int[N+1];
+        Arrays.fill(dp, Integer.MAX_VALUE);
+        adj = new ArrayList<>();
+        for (int i = 0 ; i <= N ; i++) {
+            adj.add(new ArrayList<>());
         }
     }
 }
