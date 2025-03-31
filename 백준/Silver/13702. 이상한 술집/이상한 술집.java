@@ -6,53 +6,57 @@ import java.util.StringTokenizer;
 public class Main {
 
     static int N, K;
-    static long max, answer;
-    static int[] arr;
+    static long answer;
+    static long[] arr;
 
     public static void main(String[] args) throws Exception {
-        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-
-        StringTokenizer st = new StringTokenizer(bf.readLine());
-
-        N = Integer.parseInt(st.nextToken());
-        K = Integer.parseInt(st.nextToken());
-
-        arr = new int[N];
-
-        for (int i = 0 ; i < N ; i++) {
-            arr[i] = Integer.parseInt(bf.readLine());
-        }
-
-        binarySearch();
-
+        input();
+        solve();
         System.out.println(answer);
     }
 
-    static void binarySearch() {
+    static void solve() {
+        Arrays.sort(arr);
+
         long left = 0;
         long right = Integer.MAX_VALUE;
 
-        while (left <= right) {
+        while (left < right) {
             long mid = (left + right) / 2;
 
-            // 나눠줄 수 있는 친구의 수가 너무 적음 -> 각 친구에게 나눠주는 막걸리의 양을 줄여야 함
-            if (solve(mid) < K) {
-                right = mid - 1;
-            } else {
-                left = mid + 1;
+            if (checkKettle(mid)) {
                 answer = mid;
+                left = mid+1;
+            } else {
+                right = mid;
             }
         }
     }
 
-    // mid 만큼의 막걸리를 각각의 친구들에게 나눠줬을 때, 나눠줄 수 있는 친구의 수
-    static long solve(long mid) {
-        long cnt = 0;
+    static boolean checkKettle(long mid) {
+        long result = 0;
 
         for (int i = 0 ; i < N ; i++) {
-            cnt += arr[i] / mid;
+            result += arr[i] / mid;
         }
 
-        return cnt;
+        if (result >= K) return true;
+
+        return false;
+    }
+
+    static void input() throws Exception {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(bf.readLine());
+        N = Integer.parseInt(st.nextToken());
+        K = Integer.parseInt(st.nextToken());
+        init();
+        for (int i = 0 ; i < N ; i++) {
+            arr[i] = Long.parseLong(bf.readLine());
+        }
+    }
+
+    static void init() {
+        arr = new long[N];
     }
 }
