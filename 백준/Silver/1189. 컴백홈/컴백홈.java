@@ -10,34 +10,15 @@ public class Main {
     static boolean[][] visited;
 
     public static void main(String[] args) throws Exception {
-        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-
-        StringTokenizer st = new StringTokenizer(bf.readLine());
-
-        R = Integer.parseInt(st.nextToken());
-        C = Integer.parseInt(st.nextToken());
-        K = Integer.parseInt(st.nextToken());
-
-        map = new char[R][C];
-        visited = new boolean[R][C];
-
-        for (int i = 0 ; i < R ; i++) {
-            String s = bf.readLine();
-            for (int j = 0 ; j < C ; j++) {
-                map[i][j] = s.charAt(j);
-            }
-        }
-
+        input();
         visited[R-1][0] = true;
-
         dfs(0, R-1, 1);
-
         System.out.println(answer);
     }
 
     static void dfs(int x, int y, int cnt) {
-        if (x == C-1 && y == 0 && cnt == K) {
-            answer++;
+        if (x == C-1 && y == 0) {
+            if (cnt == K) answer++;
             return;
         }
 
@@ -45,11 +26,35 @@ public class Main {
             int nx = x + dx[i];
             int ny = y + dy[i];
 
-            if (ny >= 0 && ny < R && nx >= 0 && nx < C && map[ny][nx] == '.' && !visited[ny][nx]) {
+            if (isRange(nx, ny) && !visited[ny][nx] && map[ny][nx] != 'T') {
                 visited[ny][nx] = true;
                 dfs(nx, ny, cnt+1);
                 visited[ny][nx] = false;
             }
         }
+    }
+
+    static boolean isRange(int x, int y) {
+        return x >= 0 && x < C && y >= 0 && y < R;
+    }
+
+    static void input() throws Exception {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(bf.readLine());
+        R = Integer.parseInt(st.nextToken());
+        C = Integer.parseInt(st.nextToken());
+        K = Integer.parseInt(st.nextToken());
+        init();
+        for (int i = 0 ; i < R ; i++) {
+            String s = bf.readLine();
+            for (int j = 0 ; j < C ; j++) {
+                map[i][j] = s.charAt(j);
+            }
+        }
+    }
+
+    static void init() {
+        map = new char[R][C];
+        visited = new boolean[R][C];
     }
 }
