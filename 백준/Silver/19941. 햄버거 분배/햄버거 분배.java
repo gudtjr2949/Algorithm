@@ -1,56 +1,73 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class Main {
 
-    static int N, K;
-    static char[] arr;
+    static int N, K, answer;
     static boolean[] visited;
+    static String s;
 
     public static void main(String[] args) throws Exception {
-        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(bf.readLine());
-        N = Integer.parseInt(st.nextToken());
-        K = Integer.parseInt(st.nextToken());
-
-        arr = new char[N];
-        visited = new boolean[N];
-
-        String s = bf.readLine();
-        for (int i = 0 ; i < N ; i++) {
-            arr[i] = s.charAt(i);
-        }
-
-        int answer = 0;
-
-        for (int i = 0 ; i < N ; i++) {
-            if (arr[i] == 'P' && findH(i)) {
-                answer++;
-            }
-        }
-
+        input();
+        solve();
         System.out.println(answer);
     }
 
-    static boolean findH(int idx) {
-        // 왼쪽부터
-        for (int i = idx-K ; i < idx ; i++) {
-            if (i >= 0 && !visited[i] && arr[i] == 'H') {
-                visited[i] = true;
-                return true;
+    static void solve() {
+        for (int i = 0 ; i < N ; i++) {
+            if (s.charAt(i) == 'P') {
+                boolean result = searchLeft(i);
+                if (result) {
+                    answer++;
+                }
+                else {
+                    result = searchRight(i);
+                    if (result) {
+                        answer++;
+                    }
+                }
+
             }
         }
+    }
 
-        // 오른쪽
-        for (int i = idx+1 ; i <= idx+K ; i++) {
-            if (i < N && !visited[i] && arr[i] == 'H') {
+    static boolean searchLeft(int idx) {
+        for (int i = idx-K ; i < idx ; i++) {
+            if (isRange(i) && s.charAt(i) == 'H' && !visited[i]) {
                 visited[i] = true;
                 return true;
             }
         }
 
         return false;
+    }
+
+    static boolean searchRight(int idx) {
+        for (int i = idx+1 ; i <= idx+K ; i++) {
+            if (isRange(i) && s.charAt(i) == 'H' && !visited[i]) {
+                visited[i] = true;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    static boolean isRange(int idx) {
+        return idx >= 0 && idx < N;
+    }
+
+    static void input() throws Exception {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(bf.readLine());
+        N = Integer.parseInt(st.nextToken());
+        K = Integer.parseInt(st.nextToken());
+        init();
+        s = bf.readLine();
+    }
+
+    static void init() {
+        visited = new boolean[N];
     }
 }
