@@ -1,69 +1,66 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.LinkedList;
 import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
 
     static int N, answer;
-    static PriorityQueue<Node> PQ1;
-    static PriorityQueue<Integer> PQ2;
+    static boolean[] visited;
+    static Queue<Integer> Q;
+    static Queue<Node> PQ;
     static class Node {
-        int deadLine, ramen;
-
-        public Node(int deadLine, int ramen) {
-            this.deadLine = deadLine;
+        int time, ramen;
+        public Node(int time, int ramen) {
+            this.time = time;
             this.ramen = ramen;
-        }
-
-        @Override
-        public String toString() {
-            return "Node{" +
-                    "deadLine=" + deadLine +
-                    ", ramen=" + ramen +
-                    '}';
         }
     }
 
     public static void main(String[] args) throws Exception {
-        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-        N = Integer.parseInt(bf.readLine());
-        PQ1 = new PriorityQueue<>((o1, o2) -> {
-            if (o1.deadLine == o2.deadLine) return o2.ramen - o1.ramen;
-            else return o1.deadLine - o2.deadLine;
-        });
-
-        PQ2 = new PriorityQueue<>();
-
-        for (int i = 0 ; i < N ; i++) {
-            StringTokenizer st = new StringTokenizer(bf.readLine());
-            int deadLine = Integer.parseInt(st.nextToken());
-            int ramen = Integer.parseInt(st.nextToken());
-            PQ1.add(new Node(deadLine, ramen));
-        }
-
+        input();
         solve();
-
         System.out.println(answer);
     }
 
     static void solve() {
-        while (!PQ1.isEmpty()) {
-            Node now = PQ1.poll();
-            if (now.deadLine > PQ2.size()) {
-                PQ2.add(now.ramen);
+        while (!PQ.isEmpty()) {
+            Node now = PQ.poll();
+
+            if (now.time > Q.size()) {
+                Q.add(now.ramen);
             } else {
-                if (PQ2.peek() < now.ramen) {
-                    PQ2.poll();
-                    PQ2.add(now.ramen);
+                if (Q.peek() < now.ramen) {
+                    Q.poll();
+                    Q.add(now.ramen);
                 }
             }
         }
 
-        while (!PQ2.isEmpty()) {
-            answer += PQ2.poll();
+        while (!Q.isEmpty()) {
+            answer += Q.poll();
         }
+    }
+
+    static void input() throws Exception {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        N = Integer.parseInt(bf.readLine());
+        init();
+        for (int i = 0 ; i < N ; i++) {
+            StringTokenizer st = new StringTokenizer(bf.readLine());
+            int time = Integer.parseInt(st.nextToken());
+            int ramen = Integer.parseInt(st.nextToken());
+            PQ.add(new Node(time, ramen));
+        }
+    }
+
+    static void init() {
+        Q = new PriorityQueue<>();
+        PQ = new PriorityQueue<>((o1, o2) -> {
+            if (o1.time == o2.time) return o2.ramen - o1.ramen;
+            return o1.time - o2.time;
+        });
     }
 }
