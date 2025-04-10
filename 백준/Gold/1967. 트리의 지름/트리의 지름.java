@@ -6,58 +6,67 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-    static int N, answer, tmp;
+    static int N, farNode, maxLength;
     static boolean[] visited;
     static List<List<Node>> adj;
     static class Node {
-        int idx, w;
-
-        public Node(int idx, int w) {
+        int idx, cost;
+        public Node(int idx, int cost) {
             this.idx = idx;
-            this.w = w;
+            this.cost = cost;
         }
     }
 
     public static void main(String[] args) throws Exception {
-        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-        N = Integer.parseInt(bf.readLine());
-
-        adj = new ArrayList<>();
-        for (int i = 0 ; i <= N ; i++) adj.add(new ArrayList<>());
-
-        boolean[] child = new boolean[N+1];
-
-        for (int i = 0 ; i < N-1 ; i++) {
-            StringTokenizer st = new StringTokenizer(bf.readLine());
-            int a = Integer.parseInt(st.nextToken());
-            int b = Integer.parseInt(st.nextToken());
-            int w = Integer.parseInt(st.nextToken());
-            child[a] = true;
-            adj.get(a).add(new Node(b, w));
-            adj.get(b).add(new Node(a, w));
-        }
-
-        for (int i = 1 ; i <= N ; i++) {
-            if (!child[i]) {
-                tmp = 0;
-                visited = new boolean[N+1];
-                visited[i] = true;
-                dfs(i, 0);
-                answer = Math.max(answer, tmp);
-            }
-        }
-
-        System.out.println(answer);
+        input();
+        solve();
+        System.out.println(maxLength);
     }
 
-    static void dfs(int idx, int sum) {
-        for (Node next : adj.get(idx)) {
-            if (!visited[next.idx]) {
-                visited[next.idx] = true;
-                dfs(next.idx, sum + next.w);
-            }
+    static void solve() {
+        dfs(1, 0); // 가장 멀리 있는 노드 찾기
+
+        visited = new boolean[N+1];
+        maxLength = 0;
+        dfs(farNode, 0);
+    }
+
+    static void dfs(int now, int length) {
+        if (visited[now]) return;
+        visited[now] = true;
+
+        if (maxLength < length) {
+            farNode = now;
+            maxLength = length;
         }
 
-        tmp = Math.max(tmp, sum);
+        for (Node next : adj.get(now)) {
+            if (!visited[next.idx]) {
+                dfs(next.idx, length + next.cost);
+            }
+        }
+    }
+
+
+    static void input() throws Exception {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        N = Integer.parseInt(bf.readLine());
+        init();
+        for (int i = 0 ; i < N-1 ; i++) {
+            StringTokenizer st = new StringTokenizer(bf.readLine());
+            int from = Integer.parseInt(st.nextToken());
+            int to = Integer.parseInt(st.nextToken());
+            int cost = Integer.parseInt(st.nextToken());
+            adj.get(from).add(new Node(to, cost));
+            adj.get(to).add(new Node(from, cost));
+        }
+    }
+
+    static void init() {
+        adj = new ArrayList<>();
+        for (int i = 0 ; i <= N ; i++) {
+            adj.add(new ArrayList<>());
+        }
+        visited = new boolean[N+1];
     }
 }
