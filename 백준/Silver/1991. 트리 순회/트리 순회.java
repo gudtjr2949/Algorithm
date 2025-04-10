@@ -5,7 +5,7 @@ import java.util.StringTokenizer;
 public class Main {
 
     static int N;
-    static StringBuilder sb = new StringBuilder();
+    static StringBuilder sb;
     static Node[] tree;
     static class Node {
         char value;
@@ -13,62 +13,75 @@ public class Main {
 
         public Node(char value) {
             this.value = value;
+            this.left = null;
+            this.right = null;
         }
     }
 
     public static void main(String[] args) throws Exception {
-        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-        N = Integer.parseInt(bf.readLine());
-        tree = new Node[N+1];
-
-        for (int i = 0 ; i < N ; i++) {
-            StringTokenizer st = new StringTokenizer(bf.readLine());
-            char parents = st.nextToken().charAt(0);
-            char left = st.nextToken().charAt(0);
-            char right = st.nextToken().charAt(0);
-
-            if (tree[parents - 'A'] == null) {
-                tree[parents - 'A'] = new Node(parents);
-            }
-
-            if (left != '.') {
-                tree[left - 'A'] = new Node(left);
-                tree[parents - 'A'].left = tree[left - 'A'];
-            }
-
-            if (right != '.') {
-                tree[right - 'A'] = new Node(right);
-                tree[parents - 'A'].right = tree[right - 'A'];
-            }
-        }
-
-        preOrder(tree[0]);
-        sb.append("\n");
-        inOrder(tree[0]);
-        sb.append("\n");
-        postOrder(tree[0]);
-
+        input();
+        solve();
         System.out.println(sb);
     }
 
-    static void preOrder(Node node) {
-        if (node == null) return;
-        sb.append(node.value);
-        preOrder(node.left);
-        preOrder(node.right);
+    static void solve() {
+        preOrder(tree[0]);
+        sb.append("\n");
+
+        inOrder(tree[0]);
+        sb.append("\n");
+
+        postOrder(tree[0]);
+        sb.append("\n");
     }
 
-    static void inOrder(Node node) {
-        if (node == null) return;
-        inOrder(node.left);
-        sb.append(node.value);
-        inOrder(node.right);
+    static void preOrder(Node now) {
+        if (now == null) return;
+        sb.append(now.value);
+        preOrder(now.left);
+        preOrder(now.right);
     }
 
-    static void postOrder(Node node) {
-        if (node == null) return;
-        postOrder(node.left);
-        postOrder(node.right);
-        sb.append(node.value);
+    static void inOrder(Node now) {
+        if (now == null) return;
+        inOrder(now.left);
+        sb.append(now.value);
+        inOrder(now.right);
+    }
+
+    static void postOrder(Node now) {
+        if (now == null) return;
+        postOrder(now.left);
+        postOrder(now.right);
+        sb.append(now.value);
+    }
+
+    static void input() throws Exception {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        N = Integer.parseInt(bf.readLine());
+        init();
+        for (int i = 0 ; i < N ; i++) {
+            StringTokenizer st = new StringTokenizer(bf.readLine());
+            char parent = st.nextToken().charAt(0);
+            char left = st.nextToken().charAt(0);
+            char right = st.nextToken().charAt(0);
+
+            if (tree[parent-'A'] == null) {
+                tree[parent-'A'] = new Node(parent); // 부모 노드 생성
+            }
+            if (left != '.') {
+                tree[left-'A'] = new Node(left); // 왼쪽 자식 노드 생성
+                tree[parent-'A'].left = tree[left-'A']; // 부모 노드와 왼쪽 자식 노드 연결
+            }
+            if (right != '.') {
+                tree[right-'A'] = new Node(right); // 오른쪽 자식 노드 생성
+                tree[parent-'A'].right = tree[right-'A']; // 부모 노드와 오른쪽 자식 노드 연결
+            }
+        }
+    }
+
+    static void init() {
+        tree = new Node[N+1];
+        sb = new StringBuilder();
     }
 }
