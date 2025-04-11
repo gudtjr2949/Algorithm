@@ -3,49 +3,45 @@ import java.io.InputStreamReader;
 
 public class Main {
 
-	static int G, P;
-	static int[] parents;
+    static int G, P, answer;
+    static int[] parents, airplanes;
 
-	public static void main(String[] args) throws Exception {
-		BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-		G = Integer.parseInt(bf.readLine());
-		P = Integer.parseInt(bf.readLine());
+    public static void main(String[] args) throws Exception {
+        input();
+        solve();
+        System.out.println(answer);
+    }
 
-		parents = new int[G+1];
+    static void solve() {
+        for (int i = 0 ; i < P ; i++) {
+            int findGate = find(airplanes[i]);
+            if (findGate > 0) {
+                parents[findGate]--;
+                answer++;
+            } else if (findGate == 0) {
+                return;
+            }
+        }
+    }
 
-		for (int i = 0 ; i < G+1 ; i++) {
-			parents[i] = i;
-		}
+    static int find(int num) {
+        if (parents[num] == num) return num;
+        return parents[num] = find(parents[num]);
+    }
+    
+    static void input() throws Exception {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        G = Integer.parseInt(bf.readLine());
+        P = Integer.parseInt(bf.readLine());
+        init();
+        for (int i = 0 ; i < P ; i++) {
+            airplanes[i] = Integer.parseInt(bf.readLine());
+        }
+    }
 
-		int answer = 0;
-
-		for (int i = 0 ; i < P ; i++) {
-			int num = Integer.parseInt(bf.readLine());
-
-			int findNum = findParents(num);
-
-			if (findNum != 0) {
-				union(findNum, findNum-1);
-				answer++;
-			} else {
-				break;
-			}
-		}
-
-		System.out.println(answer);
-	}
-
-	private static void union(int a, int b) {
-		a = findParents(a);
-		b = findParents(b);
-		parents[a] = b;
-	}
-
-	private static int findParents(int num) {
-		if (parents[num] == num) {
-			return num;
-		} else {
-			return parents[num] = findParents(parents[num]);
-		}
-	}
+    static void init() {
+        parents = new int[G+1];
+        for (int i = 0 ; i <= G ; i++) parents[i] = i;
+        airplanes = new int[P];
+    }
 }
