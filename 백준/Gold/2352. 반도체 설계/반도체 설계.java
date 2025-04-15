@@ -1,39 +1,61 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 public class Main {
 
+    static int N;
+    static int[] arr;
+    static List<Integer> list;
+
     public static void main(String[] args) throws Exception {
-        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        input();
+        solve();
+        System.out.println(list.size());
+    }
 
-        int N = Integer.parseInt(bf.readLine());
-        int[] arr = new int[N];
-        int[] dp = new int[N];
-
-        StringTokenizer st = new StringTokenizer(bf.readLine());
-
+    static void solve() {
         for (int i = 0 ; i < N ; i++) {
-            arr[i] = Integer.parseInt(st.nextToken());
+            if (list.isEmpty() || list.get(list.size()-1) < arr[i]) {
+                list.add(arr[i]);
+            } else {
+                int idx = bs(arr[i]);
+                list.set(idx, arr[i]);
+            }
         }
+    }
 
-        Arrays.fill(dp, 1);
+    static int bs(int key) {
+        int left = 0;
+        int right = list.size()-1;
 
-        for (int i = 1 ; i < N ; i++) {
-            for (int j = 0 ; j < i ; j++) {
-                if (arr[i] > arr[j]) {
-                    dp[i] = Math.max(dp[i], dp[j]+1);
-                }
+        while (left < right) {
+            int mid = (left + right) / 2;
+
+            if (list.get(mid) < key) {
+                left = mid+1;
+            } else {
+                right = mid;
             }
         }
 
-        int answer = 0;
+        return left;
+    }
 
+    static void input() throws Exception {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        N = Integer.parseInt(bf.readLine());
+        init();
+        StringTokenizer st = new StringTokenizer(bf.readLine());
         for (int i = 0 ; i < N ; i++) {
-            answer = Math.max(answer, dp[i]);
+            arr[i] = Integer.parseInt(st.nextToken());
         }
+    }
 
-        System.out.println(answer);
+    static void init() {
+        arr = new int[N];
+        list = new ArrayList<>();
     }
 }
