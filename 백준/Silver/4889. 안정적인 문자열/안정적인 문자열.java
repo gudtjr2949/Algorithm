@@ -4,54 +4,54 @@ import java.util.Stack;
 
 public class Main {
 
+    static int round;
     static String s;
+    static StringBuilder sb = new StringBuilder();
 
     public static void main(String[] args) throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-        s = bf.readLine();
-        StringBuilder sb  = new StringBuilder();
 
-        int idx = 1;
 
-        while (check(s)) {
-            sb.append(idx).append(". ").append(solve()).append("\n");
-
-            s = bf.readLine();
-
-            idx++;
+        while (!(s = bf.readLine()).contains("-")) {
+            round++;
+            solve();
         }
 
         System.out.println(sb);
     }
 
-    static int solve() {
+    static void solve() {
         Stack<Character> stack = new Stack<>();
-        int cnt = 0;
-        
+        int changeCnt = 0;
+
         for (int i = 0 ; i < s.length() ; i++) {
-            if (s.charAt(i) == '}') {
-                if (!stack.isEmpty())
-                    stack.pop();
-                else {
-                    cnt++;
-                    stack.push('{');
-                }
+            if (stack.isEmpty()) {
+                stack.add(s.charAt(i));
             } else {
-                stack.push(s.charAt(i));
+                if (stack.peek() == '{' && s.charAt(i) == '}') {
+                    stack.pop();
+                } else {
+                    stack.add(s.charAt(i));
+                }
             }
         }
 
-        // Stack 에 남아있는 괄호들도 계산해야 함
-        cnt += stack.size() / 2;
+        int idx = 0;
 
-        return cnt;
-    }
+        while (!stack.isEmpty()) {
+            if (idx % 2 == 0) {
+                if (stack.pop() != '}') {
+                    changeCnt++;
+                }
+            } else {
+                if (stack.pop() != '{') {
+                    changeCnt++;
+                }
+            }
 
-    static boolean check(String s) {
-        for (int i = 0 ; i < s.length() ; i++) {
-            if (s.charAt(i) == '-') return false;
+            idx++;
         }
 
-        return true;
+        sb.append(round).append(". ").append(changeCnt).append("\n");
     }
 }
