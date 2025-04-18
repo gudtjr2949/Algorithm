@@ -1,46 +1,48 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class Main {
 
-    static long G;
-    static List<Integer> list;
+    static int G;
+    static List<Integer> list = new ArrayList<>();
 
     public static void main(String[] args) throws Exception {
-        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-        G = Long.parseLong(bf.readLine());
-        list = new ArrayList<>();
+        input();
         solve();
-
-        if (list.size() == 0)
-            System.out.println(-1);
+        if (list.size() == 0) System.out.println(-1);
         else {
-            Collections.sort(list);
-            StringBuilder sb = new StringBuilder();
-
-            for (Integer num : list)
-                sb.append(num).append("\n");
-
-            System.out.println(sb);
+            for (Integer num : list) {
+                System.out.println(num);
+            }
         }
     }
 
     static void solve() {
-        int left = 2; // 현재 몸무게
-        int right = 1; // 기억하는 몸무게
+        int left = 1;
+        int right = 2;
 
-        while (left <= 100000) {
-            long result = (left * left) - (right * right);
+        while (right < 100_000) {
+            int diff = calWeight(right, left);
 
-            if (result == G) {
-                list.add(left);
+            if (diff <= G) {
+                if (diff == G) {
+                    list.add(right);
+                }
+                right++;
+            } else {
+                left++;
             }
-
-            if (result > G) right++;
-            else left++;
         }
+    }
+
+    static int calWeight(int now, int before) {
+        return (int) (Math.pow(now, 2) - Math.pow(before, 2));
+    }
+
+    static void input() throws Exception {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        G = Integer.parseInt(bf.readLine());
     }
 }
