@@ -3,65 +3,60 @@ import java.io.InputStreamReader;
 
 public class Main {
 
-    static int[] arr;
-    static int zero, one;
+    static int N, zero, one;
+    static String s;
+    static boolean[] removed;
+    static StringBuilder sb = new StringBuilder();
+
     public static void main(String[] args) throws Exception {
-        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-        String s = bf.readLine();
-
-        arr = new int[s.length()];
-
-        for (int i = 0 ; i < s.length() ; i++) {
-            arr[i] = s.charAt(i) - '0';
-        }
-
-        zero = 0;
-        one = 0;
-
-        for (int i = 0 ; i < s.length() ; i++) {
-            if (arr[i] == 0) zero++;
-            else one++;
-        }
-
-        zero /= 2;
-        one /= 2;
-
+        input();
         solve();
+        System.out.println(sb);
     }
 
     static void solve() {
-        // 1은 앞에서 부터 삭제
-        int idx = 0;
+        for (int i = 0 ; i < N ; i++) {
+            if (s.charAt(i) == '0') zero++;
+            else one++;
+        }
 
-        while (one > 0) {
-            if (arr[idx] == 1) {
-                arr[idx] = -1;
-                one--;
-                idx--;
+        // 1 빼기
+        int cnt = 0;
+        for (int i = 0 ; i < N ; i++) {
+            if (cnt == one/2) break;
+
+            if (s.charAt(i) == '1') {
+                removed[i] = true;
+                cnt++;
             }
-
-            idx++;
         }
 
-        idx = arr.length - 1;
+        // 0 빼기
+        cnt = 0;
+        for (int i = N-1 ; i >= 0 ; i--) {
+            if (cnt == zero/2) break;
 
-        // 0은 뒤에서 부터 삭제
-        while (zero > 0) {
-            if (arr[idx] == 0) {
-                arr[idx] = -1;
-                zero--;
-                idx++;
+            if (s.charAt(i) == '0') {
+                removed[i] = true;
+                cnt++;
             }
-
-            idx--;
         }
 
-        StringBuilder sb = new StringBuilder();
-
-        for (int i = 0 ; i < arr.length ; i++) {
-            if (arr[i] != -1) sb.append(arr[i]);
+        for (int i = 0 ; i < N ; i++) {
+            if (!removed[i]) {
+                sb.append(s.charAt(i));
+            }
         }
+    }
 
-        System.out.println(sb.toString());
+    static void input() throws Exception {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        s = bf.readLine();
+        init();
+    }
+
+    static void init() {
+        N = s.length();
+        removed = new boolean[N];
     }
 }
