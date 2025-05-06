@@ -1,62 +1,65 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.StringTokenizer;
 
-// 백준 9466 : 텀 프로젝트
 public class Main {
 
-    static int N, cnt;
+    static int N, completed;
     static int[] arr;
-    static boolean[] finals, visited;
+    static boolean[] visited, cycle;
 
     public static void main(String[] args) throws Exception {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
         StringBuilder sb = new StringBuilder();
 
-        int Test = Integer.parseInt(bf.readLine());
-
-        for (int T = 0 ; T < Test ; T++) {
-            N = Integer.parseInt(bf.readLine());
-            arr = new int[N+1];
-            finals = new boolean[N+1];
-            visited = new boolean[N+1];
-            cnt = 0;
-
-            StringTokenizer st = new StringTokenizer(bf.readLine(), " ");
-
-            for (int i = 1 ; i < N+1 ; i++) {
-                arr[i] = Integer.parseInt(st.nextToken());
-            }
-
-            for (int i = 1 ; i < N+1 ; i++) {
-                if (!visited[i]) {
-                    dfs(i);
-                }
-            }
-
-            sb.append(N-cnt).append("\n");
+        int T = Integer.parseInt(bf.readLine());
+        while (T-- > 0) {
+            input(bf);
+            solve();
+            sb.append(N-completed).append("\n");
         }
+
         System.out.println(sb);
     }
 
-    // dfs 돌렸을 때, 자기 자신에게 돌아와야 함
-    private static void dfs(int num) {
-        // 방문처리하고,
-        visited[num] = true;
+    static void solve() {
+        for (int i = 1 ; i <= N ; i++) {
+            if (!visited[i]) {
+                visited[i] = true;
+                dfs(i);
+            }
+        }
+    }
 
-        // 선택받은 인원에게 방문한 적이 있고, 아직까지 그 인원이 최종 팀 결정이 되지 않은 경우 -> 싸이클
-        if (visited[arr[num]] && !finals[arr[num]]) {
-            for (int i = arr[num]; num != i; i = arr[i])
-                cnt++;
-            cnt++;
+    static void dfs(int now) {
+        int next = arr[now];
+
+        if (!visited[next]) {
+            visited[next] = true;
+            dfs(next);
+        } else if (!cycle[next]) { // 싸이클 발견
+            completed++;
+            for (int i = next ; i != now ; i = arr[i]) {
+                completed++;
+            }
         }
 
-        if (!visited[arr[num]]) {
-            dfs(arr[num]);
-        }
+        cycle[now] = true;
+    }
 
-        // 여기까지 내려왔다는 것은 끝까지 다 돌고 내려온거
-        finals[num] = true;
+    static void input(BufferedReader bf) throws Exception {
+        N = Integer.parseInt(bf.readLine());
+        init();
+        StringTokenizer st = new StringTokenizer(bf.readLine());
+        for (int i = 1 ; i <= N ; i++) {
+            arr[i] = Integer.parseInt(st.nextToken());
+        }
+    }
+
+    static void init() {
+        completed = 0;
+        arr = new int[N+1];
+        visited = new boolean[N+1];
+        cycle = new boolean[N+1];
     }
 }
