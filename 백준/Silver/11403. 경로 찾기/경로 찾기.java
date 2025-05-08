@@ -6,23 +6,10 @@ public class Main {
 
     static int N;
     static int[][] map;
-    static boolean[][] visited;
 
     public static void main(String[] args) throws Exception {
-        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-        N = Integer.parseInt(bf.readLine());
-
-        map = new int[N][N];
-
-        for (int i = 0 ; i < N ; i++) {
-            StringTokenizer st = new StringTokenizer(bf.readLine());
-            for (int j = 0 ; j < N ; j++) {
-                map[i][j] = Integer.parseInt(st.nextToken());
-            }
-        }
-
+        input();
         solve();
-
         for (int i = 0 ; i < N ; i++) {
             for (int j = 0 ; j < N ; j++) {
                 System.out.print(map[i][j] + " ");
@@ -41,5 +28,21 @@ public class Main {
                 }
             }
         }
+    }
+
+    static void input() throws Exception {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        N = Integer.parseInt(bf.readLine());
+        init();
+        for (int i = 0 ; i < N ; i++) {
+            StringTokenizer st = new StringTokenizer(bf.readLine());
+            for (int j = 0 ; j < N ; j++) {
+                map[i][j] = Integer.parseInt(st.nextToken());
+            }
+        }
+    }
+
+    static void init() {
+        map = new int[N][N];
     }
 }
