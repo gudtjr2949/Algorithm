@@ -3,33 +3,43 @@ import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 public class Main {
+
+    static int N, L, W, H;
+    static double MIN, answer;
+
     public static void main(String[] args) throws Exception {
-        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        input();
+        solve();
+        System.out.println(answer);
+    }
 
-        StringTokenizer st = new StringTokenizer(bf.readLine());
+    static void solve() {
+        double left = 0.0;
+        double right = MIN;
 
-        int N = Integer.parseInt(st.nextToken());
-        int L = Integer.parseInt(st.nextToken());
-        int W = Integer.parseInt(st.nextToken());
-        int H = Integer.parseInt(st.nextToken());
-
-
-        double left = 0;
-        double right = Math.max(L, Math.max(W, H));
-        double mid = 0;
-        double answer = 0;
-
-        for (int i = 0 ; i < 100 ; i++) {
-            mid = (left + right) / 2;
-
-            if ((long)(L / mid) * (long)(W / mid) * (long)(H / mid) < N) {
-                right = mid;
-            } else {
-                answer = mid;
+        for(int i = 0 ; i < 5000 ; i++){
+            double mid = (left + right) / 2;
+            if (calBox(mid)) {
                 left = mid;
+            } else {
+                right = mid;
             }
         }
 
-        System.out.println(answer);
+        answer = left;
+    }
+
+    static boolean calBox(double mid) {
+        return N <= (long)(L/mid)*(long)(W/mid)*(long)(H/mid);
+    }
+
+    static void input() throws Exception {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(bf.readLine());
+        N = Integer.parseInt(st.nextToken());
+        L = Integer.parseInt(st.nextToken());
+        W = Integer.parseInt(st.nextToken());
+        H = Integer.parseInt(st.nextToken());
+        MIN = Math.min(L, Math.min(W, H));
     }
 }
