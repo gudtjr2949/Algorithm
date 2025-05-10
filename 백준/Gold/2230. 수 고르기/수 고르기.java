@@ -5,43 +5,48 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-    static int N, M, answer = Integer.MAX_VALUE;
-    static int[] A;
+    static int N, M, answer;
+    static int[] arr;
 
     public static void main(String[] args) throws Exception {
-        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(bf.readLine());
-        N = Integer.parseInt(st.nextToken());
-        M = Integer.parseInt(st.nextToken());
-
-        A = new int[N];
-
-        for (int i = 0 ; i < N ; i++) {
-            A[i] = Integer.parseInt(bf.readLine());
-        }
-
+        input();
         solve();
-
         System.out.println(answer);
     }
 
     static void solve() {
-        Arrays.sort(A);
+        Arrays.sort(arr);
 
         int left = 0;
-        int right = 1;
+        int right = 0;
 
-        while (left <= right && right < N && left < N) {
-            int diff = A[right] - A[left];
-
-            if (diff < M) {
+        while (left < N && right < N) {
+            if (arr[right] - arr[left] < M) {
                 right++;
             } else {
+                if (arr[right] - arr[left] == M) {
+                    answer = M;
+                    break;
+                }
+                answer = Math.min(answer, arr[right] - arr[left]);
                 left++;
-                answer = Math.min(answer, diff);
-
-                if (answer == M) break;
             }
         }
+    }
+
+    static void input() throws Exception {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(bf.readLine());
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+        init();
+        for (int i = 0 ; i < N ; i++) {
+            arr[i] = Integer.parseInt(bf.readLine());
+        }
+    }
+
+    static void init() {
+        arr = new int[N];
+        answer = Integer.MAX_VALUE;
     }
 }
