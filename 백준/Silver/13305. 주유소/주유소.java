@@ -6,7 +6,7 @@ public class Main {
 
     static int N;
     static long answer;
-    static int[] arr, dis;
+    static long[] arr, dis;
 
     public static void main(String[] args) throws Exception {
         input();
@@ -15,7 +15,7 @@ public class Main {
     }
 
     static void solve() {
-        int minPrice = 1_000_000_001;
+        long minPrice = 1_000_000_001;
         for (int i = 0 ; i < N-1 ; i++) {
             minPrice = Math.min(minPrice, arr[i]);
             answer += minPrice * dis[i];
@@ -28,17 +28,17 @@ public class Main {
         init();
         StringTokenizer st = new StringTokenizer(bf.readLine());
         for (int i = 0 ; i < N-1 ; i++) {
-            dis[i] = Integer.parseInt(st.nextToken());
+            dis[i] = Long.parseLong(st.nextToken());
         }
 
         st = new StringTokenizer(bf.readLine());
         for (int i = 0 ; i < N ; i++) {
-            arr[i] = Integer.parseInt(st.nextToken());
+            arr[i] = Long.parseLong(st.nextToken());
         }
     }
 
     static void init() {
-        dis = new int[N-1];
-        arr = new int[N];
+        dis = new long[N-1];
+        arr = new long[N];
     }
 }
