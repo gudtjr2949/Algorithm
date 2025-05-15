@@ -1,65 +1,80 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class Main {
 
-    static int N, M, answer;
+    static int N, M, totalCost, maxCost;
     static int[] parents;
-    static Node[] nodes;
+    static List<Node> list;
     static class Node {
-        int a, b, cost;
-        public Node(int a, int b, int cost) {
-            this.a = a;
-            this.b = b;
+        int start, end, cost;
+        public Node(int start, int end, int cost) {
+            this.start = start;
+            this.end = end;
             this.cost = cost;
         }
     }
 
     public static void main(String[] args) throws Exception {
-        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(bf.readLine());
-        N = Integer.parseInt(st.nextToken());
-        M = Integer.parseInt(st.nextToken());
-        parents = new int[N+1];
-        nodes = new Node[M];
+        input();
+        solve();
+        System.out.println(totalCost - maxCost);
+    }
 
-        for (int i = 1 ; i <= N ; i++) parents[i] = i;
+    static void solve() {
+        Collections.sort(list, (o1, o2) -> o1.cost - o2.cost);
 
         for (int i = 0 ; i < M ; i++) {
-           st = new StringTokenizer(bf.readLine());
-           int a = Integer.parseInt(st.nextToken());
-           int b = Integer.parseInt(st.nextToken());
-           int cost = Integer.parseInt(st.nextToken());
-           nodes[i] = new Node(a, b, cost);
-        }
+            Node now = list.get(i);
 
-        Arrays.sort(nodes, (o1, o2) -> o1.cost - o2.cost);
+            int start = find(now.start);
+            int end = find(now.end);
 
-        int max = 0;
-
-        for (Node node : nodes) {
-            if (find(node.a) != find(node.b)) {
-                answer += node.cost;
-                max = Math.max(max, node.cost);
-                union(node.a, node.b);
+            if (start != end) {
+                totalCost += now.cost;
+                maxCost = Math.max(maxCost, now.cost); // 모든 집이 연결된 후, 그 중 하나의 길만 없애면 됨.
+                union(now.start, now.end);
             }
         }
-
-        System.out.println(answer - max);
     }
 
     static void union(int a, int b) {
         a = find(a);
         b = find(b);
 
-        if (a < b) parents[b] = a;
-        else parents[a] = b;
+        if (a == b) return;
+
+        if (a < b) {
+            parents[b] = a;
+        } else {
+            parents[a] = b;
+        }
     }
 
-    static int find(int num) {
-        if (parents[num] == num) return num;
-        return parents[num] = find(parents[num]);
+    static int find(int idx) {
+        if (idx == parents[idx]) return idx;
+        return parents[idx] = find(parents[idx]);
+    }
+
+    static void input() throws Exception {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(bf.readLine());
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+        init();
+        for (int i = 0 ; i < M ; i++) {
+            st = new StringTokenizer(bf.readLine());
+            int start = Integer.parseInt(st.nextToken());
+            int end = Integer.parseInt(st.nextToken());
+            int cost = Integer.parseInt(st.nextToken());
+            list.add(new Node(start, end, cost));
+        }
+    }
+
+    static void init() {
+        list = new ArrayList<>();
+        parents = new int[N+1];
+        for (int i = 1 ; i <= N ; i++) parents[i] = i;
     }
 }
