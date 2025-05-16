@@ -9,29 +9,38 @@ public class Main {
     static long[][] dp;
 
     public static void main(String[] args) throws Exception {
-        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-        N = Integer.parseInt(bf.readLine());
-        dp = new long[N+1][10];
-
-        Arrays.fill(dp[1], 1);
-        for (int i = 0 ; i <= N ; i++)
-            dp[i][0] = 1;
-
+        input();
         solve();
+        findAnswer();
+        System.out.println(answer%10_007);
+    }
 
-        System.out.println(answer % 10_007);
+    static void findAnswer() {
+        for (int i = 0 ; i < 10 ; i++) {
+            answer += dp[N][i];
+        }
     }
 
     static void solve() {
         for (int i = 2 ; i <= N ; i++) {
-            for (int j = 1 ; j <= 9 ; j++) {
-                dp[i][j] = dp[i-1][j] + dp[i][j-1];
+            for (int j = 0 ; j < 10 ; j++) {
+                for (int k = 0 ; k <= j ; k++) {
+                    dp[i][j] += dp[i-1][k];
+                }
                 dp[i][j] %= 10_007;
             }
         }
 
-        for (int i = 0 ; i <= 9 ; i++) {
-            answer += dp[N][i];
-        }
+    }
+
+    static void input() throws Exception {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        N = Integer.parseInt(bf.readLine());
+        init();
+    }
+
+    static void init() {
+        dp = new long[N+1][10];
+        Arrays.fill(dp[1], 1);
     }
 }
